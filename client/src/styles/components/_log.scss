@@ -1,0 +1,18 @@
+//0, 0, 0, 0.85
+.left-side {
+	@media screen and (min-width: 992px) {
+		height: 100vh;
+		h1 {
+			font-size: 3rem;
+		}
+	}
+	&::before {
+		background: $bg;
+	}
+	.text {
+		color: rgba(0, 0, 0, 0.85);
+		h1 {
+			font-size: 2.1rem;
+		}
+	}
+}
