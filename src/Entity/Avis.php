@@ -21,6 +21,14 @@ class Avis
     #[ORM\Column(type: 'integer')]
     private $note;
 
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'avis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $product;
+
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'avis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $client;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +54,30 @@ class Avis
     public function setNote(int $note): self
     {
         $this->note = $note;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
 
         return $this;
     }

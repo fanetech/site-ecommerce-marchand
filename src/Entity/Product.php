@@ -4,10 +4,14 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    iri: "Product",
+)]
 class Product
 {
     #[ORM\Id]
@@ -59,6 +63,22 @@ class Product
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updatedAt;
+
+    #[ORM\ManyToOne(targetEntity: Marchand::class, inversedBy: 'product')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $marchand;
+
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Avis::class, orphanRemoval: true)]
+    private $avis;
+
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Command::class)]
+    private $command;
+
+    public function __construct()
+    {
+        $this->avis = new ArrayCollection();
+        $this->command = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -241,6 +261,78 @@ class Product
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getMarchand(): ?Marchand
+    {
+        return $this->marchand;
+    }
+
+    public function setMarchand(?Marchand $marchand): self
+    {
+        $this->marchand = $marchand;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Avis[]
+     */
+    public function getAvis(): Collection
+    {
+        return $this->avis;
+    }
+
+    public function addAvi(Avis $avi): self
+    {
+        if (!$this->avis->contains($avi)) {
+            $this->avis[] = $avi;
+            $avi->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvi(Avis $avi): self
+    {
+        if ($this->avis->removeElement($avi)) {
+            // set the owning side to null (unless already changed)
+            if ($avi->getProduct() === $this) {
+                $avi->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Command[]
+     */
+    public function getCommand(): Collection
+    {
+        return $this->command;
+    }
+
+    public function addCommand(Command $command): self
+    {
+        if (!$this->command->contains($command)) {
+            $this->command[] = $command;
+            $command->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommand(Command $command): self
+    {
+        if ($this->command->removeElement($command)) {
+            // set the owning side to null (unless already changed)
+            if ($command->getProduct() === $this) {
+                $command->setProduct(null);
+            }
+        }
 
         return $this;
     }

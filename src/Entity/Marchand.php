@@ -4,10 +4,16 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\MarchandRepository;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MarchandRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    denormalizationContext: ['groups' => ['white:post']]
+)]
 class Marchand
 {
     #[ORM\Id]
@@ -16,55 +22,92 @@ class Marchand
     private $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post'])]
     private $name;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post'])]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post'])]
     private $storeName;
 
     #[ORM\Column(type: 'string', length: 70, nullable: true)]
+    #[Groups(['white:post'])]
     private $email;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(['white:post'])]
     private $phone;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post'])]
     private $compte;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['white:post'])]
     private $logo;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string')]
+    #[Groups(['white:post'])]
     private $favicon;
 
     #[ORM\Column(type: 'text')]
+    #[Groups(['white:post'])]
     private $description;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['white:post'])]
     private $baniere;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['white:post'])]
     private $legalPage;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['white:post'])]
     private $sellPage;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['white:post'])]
     private $useTerms;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['white:post'])]
     private $faq;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['white:post'])]
     private $createdAt;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['white:post'])]
     private $updatedAt;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post'])]
     private $password;
+
+    #[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Product::class, orphanRemoval: true)]
+
+    private $product;
+
+    #[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Command::class, orphanRemoval: true)]
+
+    private $Command;
+
+    #[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Client::class, orphanRemoval: true)]
+    private $client;
+
+    public function __construct()
+    {
+        $this->product = new ArrayCollection();
+        $this->Command = new ArrayCollection();
+        $this->client = new ArrayCollection();
+        $this->setUpdatedAt(new DateTime);
+        $this->setCreatedAt(new DateTime);
+    }
 
     public function getId(): ?int
     {
@@ -271,6 +314,96 @@ class Marchand
     public function setPassword(?string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProduct(): Collection
+    {
+        return $this->product;
+    }
+
+    public function addProduct(Product $product): self
+    {
+        if (!$this->product->contains($product)) {
+            $this->product[] = $product;
+            $product->setMarchand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProduct(Product $product): self
+    {
+        if ($this->product->removeElement($product)) {
+            // set the owning side to null (unless already changed)
+            if ($product->getMarchand() === $this) {
+                $product->setMarchand(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Command[]
+     */
+    public function getCommand(): Collection
+    {
+        return $this->Command;
+    }
+
+    public function addCommand(Command $command): self
+    {
+        if (!$this->Command->contains($command)) {
+            $this->Command[] = $command;
+            $command->setMarchand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommand(Command $command): self
+    {
+        if ($this->Command->removeElement($command)) {
+            // set the owning side to null (unless already changed)
+            if ($command->getMarchand() === $this) {
+                $command->setMarchand(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Client[]
+     */
+    public function getClient(): Collection
+    {
+        return $this->client;
+    }
+
+    public function addClient(Client $client): self
+    {
+        if (!$this->client->contains($client)) {
+            $this->client[] = $client;
+            $client->setMarchand($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClient(Client $client): self
+    {
+        if ($this->client->removeElement($client)) {
+            // set the owning side to null (unless already changed)
+            if ($client->getMarchand() === $this) {
+                $client->setMarchand(null);
+            }
+        }
 
         return $this;
     }

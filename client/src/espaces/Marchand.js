@@ -5,9 +5,6 @@ import Log from '../components/Log';
 const Marchand = () => {
 	return (
 		<div className="marchand">
-			<div className="navbar">
-				<Navbar />
-			</div>
 			<Log />
 		</div>
 	);

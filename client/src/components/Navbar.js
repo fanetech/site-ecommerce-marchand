@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
 	return (
@@ -23,7 +24,7 @@ const Navbar = () => {
 						<ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
 							<li class="nav-item">
 								<a class="nav-link active" aria-current="page" href="#!">
-									Accieul
+									Accueil
 								</a>
 							</li>
 							<li class="nav-item">
@@ -41,6 +42,13 @@ const Navbar = () => {
 							<button class="btn btn-outline-dark" type="submit">
 								Connexion
 							</button>
+						</form>
+						<form class="d-flex ml-2">
+							<NavLink exact to="/test">
+								<button class="btn btn-outline-dark" type="submit">
+									test
+								</button>
+							</NavLink>
 						</form>
 					</div>
 				</div>

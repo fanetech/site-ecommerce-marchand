@@ -7,7 +7,9 @@ use App\Repository\CommandRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommandRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    iri: "Command"
+)]
 class Command
 {
     #[ORM\Id]
@@ -32,6 +34,18 @@ class Command
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $adress;
+
+    #[ORM\ManyToOne(targetEntity: Marchand::class, inversedBy: 'Command')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $marchand;
+
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'command')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $product;
+
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'command')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $client;
 
     public function getId(): ?int
     {
@@ -106,6 +120,42 @@ class Command
     public function setAdress(?string $adress): self
     {
         $this->adress = $adress;
+
+        return $this;
+    }
+
+    public function getMarchand(): ?Marchand
+    {
+        return $this->marchand;
+    }
+
+    public function setMarchand(?Marchand $marchand): self
+    {
+        $this->marchand = $marchand;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
 
         return $this;
     }
