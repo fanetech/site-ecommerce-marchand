@@ -2,17 +2,28 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\MarchandRepository;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use PostBanniereController;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\MarchandRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: MarchandRepository::class)]
 #[ApiResource(
-    denormalizationContext: ['groups' => ['white:post']]
+    denormalizationContext: ['groups' => ['white:post']],
+    itemOperations: [
+        'image' => [
+            'method' => 'POST',
+            'path' => '/posts/{id}/banniere',
+            'desieralize' => false,
+            "controller" => PostBanniereController::class
+
+        ]
+
+    ]
 )]
 class Marchand
 {

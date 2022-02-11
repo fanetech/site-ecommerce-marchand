@@ -1,25 +1,12 @@
-.marchand-connect-container {
-	#layoutSidenav {
-		height: 100vh;
-	}
-	.sb-sidenav-menu {
-	}
-	.navbar {
-		background: #212529 !important;
-		.nav-item {
-			color: #89928e !important;
-		}
-	}
-	.container-fluid {
-		margin-top: 70px;
-	}
-	.navbar-product {
-		background: white !important;
-		a {
-			//color: white;
-		}
-	}
-	.layoutSidenav_content {
-		width: 100vh;
-	}
+.py-5 {
+	padding-top: 3rem !important;
+	padding-bottom: 0px !important;
+}
+
+.banniere-pic {
+	height: 100%;
+	width: 100%;
+}
+.bg-dark {
+	height: 60%;
 }
