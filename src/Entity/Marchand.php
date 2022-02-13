@@ -3,25 +3,70 @@
 namespace App\Entity;
 
 use DateTime;
-use PostBanniereController;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\BanniereController;
 use App\Repository\MarchandRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\Des1Controller;
+use App\Controller\Des2Controller;
+use App\Controller\Des3Controller;
+use App\Controller\LogController;
+use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: MarchandRepository::class)]
+/**
+ * @Vich\Uploadable()
+ */
 #[ApiResource(
     denormalizationContext: ['groups' => ['white:post']],
+    normalizationContext: ['groups' => ['read:post']],
     itemOperations: [
+        'get',
+        //'post',
+        'put',
+        'delete',
+        'patch',
         'image' => [
             'method' => 'POST',
-            'path' => '/posts/{id}/banniere',
-            'desieralize' => false,
-            "controller" => PostBanniereController::class
+            'path' => '/marchand/{id}/banniere',
+            'deserialize' => false,
+            "controller" => BanniereController::class
+
+        ],
+        'logo' => [
+            'method' => 'POST',
+            'path' => '/marchand/{id}/logo',
+            'deserialize' => false,
+            "controller" => LogController::class
+
+        ],
+
+        'image1' => [
+            'method' => 'POST',
+            'path' => '/marchand/{id}/img1',
+            'deserialize' => false,
+            "controller" => Des1Controller::class
+
+        ],
+        'image2' => [
+            'method' => 'POST',
+            'path' => '/marchand/{id}/img2',
+            'deserialize' => false,
+            "controller" => Des2Controller::class
+
+        ],
+        'image3' => [
+            'method' => 'POST',
+            'path' => '/marchand/{id}/img3',
+            'deserialize' => false,
+            "controller" => Des3Controller::class
 
         ]
+
 
     ]
 )]
@@ -30,62 +75,63 @@ class Marchand
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['read:post'])]
     private $id;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $name;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $firstName;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $storeName;
 
     #[ORM\Column(type: 'string', length: 70, nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $email;
 
     #[ORM\Column(type: 'integer')]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $phone;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $compte;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $logo;
 
     #[ORM\Column(type: 'string')]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $favicon;
 
     #[ORM\Column(type: 'text')]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $description;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $baniere;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $legalPage;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $sellPage;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $useTerms;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['white:post'])]
+    #[Groups(['white:post', 'read:post'])]
     private $faq;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
@@ -100,16 +146,89 @@ class Marchand
     #[Groups(['white:post'])]
     private $password;
 
-    #[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Product::class, orphanRemoval: true)]
+    //#[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Product::class, orphanRemoval: true)]
 
-    private $product;
+    //private $product;
 
-    #[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Command::class, orphanRemoval: true)]
+    //#[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Command::class, orphanRemoval: true)]
 
-    private $Command;
+    //private $Command;
 
-    #[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Client::class, orphanRemoval: true)]
-    private $client;
+    //#[ORM\OneToMany(mappedBy: 'marchand', targetEntity: Client::class, orphanRemoval: true)]
+    //private $client;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="picture",fileNameProperty="baniere")
+     */
+    private $file;
+
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="picture",fileNameProperty="logo")
+     */
+    private $file2;
+
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="picture",fileNameProperty="image1")
+     */
+    private $file3;
+
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="picture",fileNameProperty="image2")
+     */
+    private $file4;
+
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="picture",fileNameProperty="image3")
+     */
+    private $file5;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $description1;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $description2;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $description3;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $title1;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $title2;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $title3;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $image1;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $image2;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['white:post', 'read:post'])]
+    private $image3;
+
+
+
 
     public function __construct()
     {
@@ -293,6 +412,9 @@ class Marchand
         return $this;
     }
 
+
+
+
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
@@ -329,92 +451,264 @@ class Marchand
         return $this;
     }
 
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProduct(): Collection
+    ///**
+    // * @return Collection|Product[]
+    // */
+    //public function getProduct(): Collection
+    //{
+    //    return $this->product;
+    //}
+
+    //public function addProduct(Product $product): self
+    //{
+    //    if (!$this->product->contains($product)) {
+    //        $this->product[] = $product;
+    //        $product->setMarchand($this);
+    //    }
+
+    //    return $this;
+    //}
+
+    //public function removeProduct(Product $product): self
+    //{
+    //    if ($this->product->removeElement($product)) {
+    //        // set the owning side to null (unless already changed)
+    //        if ($product->getMarchand() === $this) {
+    //            $product->setMarchand(null);
+    //        }
+    //    }
+
+    //    return $this;
+    //}
+
+    ///**
+    // * @return Collection|Command[]
+    // */
+    //public function getCommand(): Collection
+    //{
+    //    return $this->Command;
+    //}
+
+    //public function addCommand(Command $command): self
+    //{
+    //    if (!$this->Command->contains($command)) {
+    //        $this->Command[] = $command;
+    //        $command->setMarchand($this);
+    //    }
+
+    //    return $this;
+    //}
+
+    //public function removeCommand(Command $command): self
+    //{
+    //    if ($this->Command->removeElement($command)) {
+    //        // set the owning side to null (unless already changed)
+    //        if ($command->getMarchand() === $this) {
+    //            $command->setMarchand(null);
+    //        }
+    //    }
+
+    //    return $this;
+    //}
+
+    ///**
+    // * @return Collection|Client[]
+    // */
+    //public function getClient(): Collection
+    //{
+    //    return $this->client;
+    //}
+
+    //public function addClient(Client $client): self
+    //{
+    //    if (!$this->client->contains($client)) {
+    //        $this->client[] = $client;
+    //        $client->setMarchand($this);
+    //    }
+
+    //    return $this;
+    //}
+
+    //public function removeClient(Client $client): self
+    //{
+    //    if ($this->client->removeElement($client)) {
+    //        // set the owning side to null (unless already changed)
+    //        if ($client->getMarchand() === $this) {
+    //            $client->setMarchand(null);
+    //        }
+    //    }
+
+    //    return $this;
+    //}
+
+    public function getFile(): ?File
     {
-        return $this->product;
+        return $this->file;
     }
 
-    public function addProduct(Product $product): self
+    public function setFile(?File $file): self
     {
-        if (!$this->product->contains($product)) {
-            $this->product[] = $product;
-            $product->setMarchand($this);
-        }
+        $this->file = $file;
 
         return $this;
     }
 
-    public function removeProduct(Product $product): self
+
+    public function getFile2(): ?File
     {
-        if ($this->product->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getMarchand() === $this) {
-                $product->setMarchand(null);
-            }
-        }
+        return $this->file2;
+    }
+
+    public function setFile2(?File $file2): self
+    {
+        $this->file2 = $file2;
 
         return $this;
     }
 
-    /**
-     * @return Collection|Command[]
-     */
-    public function getCommand(): Collection
+
+    public function getFile3(): ?File
     {
-        return $this->Command;
+        return $this->file3;
     }
 
-    public function addCommand(Command $command): self
+    public function setFile3(?File $file3): self
     {
-        if (!$this->Command->contains($command)) {
-            $this->Command[] = $command;
-            $command->setMarchand($this);
-        }
+        $this->file3 = $file3;
 
         return $this;
     }
 
-    public function removeCommand(Command $command): self
+
+    public function getFile5(): ?File
     {
-        if ($this->Command->removeElement($command)) {
-            // set the owning side to null (unless already changed)
-            if ($command->getMarchand() === $this) {
-                $command->setMarchand(null);
-            }
-        }
+        return $this->file5;
+    }
+
+    public function setFile5(?File $file5): self
+    {
+        $this->file5 = $file5;
 
         return $this;
     }
 
-    /**
-     * @return Collection|Client[]
-     */
-    public function getClient(): Collection
+
+    public function getFile4(): ?File
     {
-        return $this->client;
+        return $this->file4;
     }
 
-    public function addClient(Client $client): self
+    public function setFile4(?File $file4): self
     {
-        if (!$this->client->contains($client)) {
-            $this->client[] = $client;
-            $client->setMarchand($this);
-        }
+        $this->file4 = $file4;
 
         return $this;
     }
 
-    public function removeClient(Client $client): self
+    public function getDescription1(): ?string
     {
-        if ($this->client->removeElement($client)) {
-            // set the owning side to null (unless already changed)
-            if ($client->getMarchand() === $this) {
-                $client->setMarchand(null);
-            }
-        }
+        return $this->description1;
+    }
+
+    public function setDescription1(?string $description1): self
+    {
+        $this->description1 = $description1;
+
+        return $this;
+    }
+
+    public function getDescription2(): ?string
+    {
+        return $this->description2;
+    }
+
+    public function setDescription2(?string $description2): self
+    {
+        $this->description2 = $description2;
+
+        return $this;
+    }
+
+    public function getDescription3(): ?string
+    {
+        return $this->description3;
+    }
+
+    public function setDescription3(?string $description3): self
+    {
+        $this->description3 = $description3;
+
+        return $this;
+    }
+
+    public function getTitle1(): ?string
+    {
+        return $this->title1;
+    }
+
+    public function setTitle1(?string $title1): self
+    {
+        $this->title1 = $title1;
+
+        return $this;
+    }
+
+    public function getTitle2(): ?string
+    {
+        return $this->title2;
+    }
+
+    public function setTitle2(?string $title2): self
+    {
+        $this->title2 = $title2;
+
+        return $this;
+    }
+
+    public function getTitle3(): ?string
+    {
+        return $this->title3;
+    }
+
+    public function setTitle3(?string $title3): self
+    {
+        $this->title3 = $title3;
+
+        return $this;
+    }
+
+    public function getImage1(): ?string
+    {
+        return $this->image1;
+    }
+
+    public function setImage1(?string $image1): self
+    {
+        $this->image1 = $image1;
+
+        return $this;
+    }
+
+    public function getImage2(): ?string
+    {
+        return $this->image2;
+    }
+
+    public function setImage2(?string $image2): self
+    {
+        $this->image2 = $image2;
+
+        return $this;
+    }
+
+    public function getImage3(): ?string
+    {
+        return $this->image3;
+    }
+
+    public function setImage3(?string $image3): self
+    {
+        $this->image3 = $image3;
 
         return $this;
     }

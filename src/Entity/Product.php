@@ -2,60 +2,114 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\ProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\Product2Controller;
+use App\Controller\Product3Controller;
+use App\Controller\ProductController;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+/**
+ * @Vich\Uploadable()
+ */
 #[ApiResource(
-    iri: "Product",
+    denormalizationContext: ['groups' => ['white:product']],
+    normalizationContext: ['groups' => ['read:product']],
+    itemOperations: [
+        'get',
+        //'post',
+        'put',
+        'delete',
+        'patch',
+        'product1' => [
+            'method' => 'POST',
+            'path' => '/product/{id}/prod1',
+            'deserialize' => false,
+            "controller" => ProductController::class
+
+        ],
+
+        'product2' => [
+            'method' => 'POST',
+            'path' => '/product/{id}/prod2',
+            'deserialize' => false,
+            "controller" => Product2Controller::class
+
+        ],
+
+        'product3' => [
+            'method' => 'POST',
+            'path' => '/product/{id}/prod3',
+            'deserialize' => false,
+            "controller" => Product3Controller::class
+
+        ],
+    ]
 )]
 class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['read:product'])]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255,  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $categorie;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255,  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $title;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'text',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $description1;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'text',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $description2;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(type: 'text',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $description3;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $price;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $sellPrice;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $reducedPrice;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $stock;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255,  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $picture1;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255,  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $picture2;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255,  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $picture3;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime',  nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
     private $shippingDate;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
@@ -64,26 +118,99 @@ class Product
     #[ORM\Column(type: 'datetime', nullable: true)]
     private $updatedAt;
 
-    #[ORM\ManyToOne(targetEntity: Marchand::class, inversedBy: 'product')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $marchand;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['read:product', 'white:product'])]
+    private $marchandId;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Avis::class, orphanRemoval: true)]
-    private $avis;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: Command::class)]
-    private $command;
+
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="product",fileNameProperty="picture1")
+     */
+    private $prod1;
+
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="product",fileNameProperty="picture2")
+     */
+    private $prod2;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="product",fileNameProperty="picture3")
+     */
+    private $prod3;
+
+
+
+
+
+    //#[ORM\ManyToOne(targetEntity: Marchand::class, inversedBy: 'product')]
+
+    //#[ORM\OneToMany(mappedBy: 'product', targetEntity: Avis::class, orphanRemoval: true)]
+    //#[Groups('read:post:product', 'white:post:product')]
+    //private $avis;
+
+    //#[ORM\OneToMany(mappedBy: 'product', targetEntity: Command::class)]
+    //#[Groups('read:post:product', 'white:post:product')]
+    //private $command;
 
     public function __construct()
     {
-        $this->avis = new ArrayCollection();
-        $this->command = new ArrayCollection();
+
+        $this->setUpdatedAt(new DateTime());
+        $this->setCreatedAt(new DateTime());
     }
 
     public function getId(): ?int
     {
         return $this->id;
     }
+
+
+    public function getProd1(): ?File
+    {
+        return $this->prod1;
+    }
+
+    public function setProd1(?File $prod1): self
+    {
+        $this->prod1 = $prod1;
+
+        return $this;
+    }
+
+
+    public function getProd2(): ?File
+    {
+        return $this->prod2;
+    }
+
+    public function setProd2(?File $prod2): self
+    {
+        $this->prod2 = $prod2;
+
+        return $this;
+    }
+
+
+    public function getProd3(): ?File
+    {
+        return $this->prod3;
+    }
+
+    public function setProd3(?File $prod3): self
+    {
+        $this->prod3 = $prod3;
+
+        return $this;
+    }
+
+
+
 
     public function getCategorie(): ?string
     {
@@ -265,74 +392,76 @@ class Product
         return $this;
     }
 
-    public function getMarchand(): ?Marchand
+
+
+    ///**
+    // * @return Collection|Avis[]
+    // */
+    //public function getAvis(): Collection
+    //{
+    //    return $this->avis;
+    //}
+
+    //public function addAvi(Avis $avi): self
+    //{
+    //    if (!$this->avis->contains($avi)) {
+    //        $this->avis[] = $avi;
+    //        $avi->setProduct($this);
+    //    }
+
+    //    return $this;
+    //}
+
+    //public function removeAvi(Avis $avi): self
+    //{
+    //    if ($this->avis->removeElement($avi)) {
+    //        // set the owning side to null (unless already changed)
+    //        if ($avi->getProduct() === $this) {
+    //            $avi->setProduct(null);
+    //        }
+    //    }
+
+    //    return $this;
+    //}
+
+    //**
+    // * @return Collection|Command[]
+    // */
+    //public function getCommand(): Collection
+    //{
+    //    return $this->command;
+    //}
+
+    //public function addCommand(Command $command): self
+    //{
+    //    if (!$this->command->contains($command)) {
+    //        $this->command[] = $command;
+    //        $command->setProduct($this);
+    //    }
+
+    //    return $this;
+    //}
+
+    //public function removeCommand(Command $command): self
+    //{
+    //    if ($this->command->removeElement($command)) {
+    //        // set the owning side to null (unless already changed)
+    //        if ($command->getProduct() === $this) {
+    //            $command->setProduct(null);
+    //        }
+    //    }
+
+    //    return $this;
+    //}
+
+    public function getMarchandId(): ?string
     {
-        return $this->marchand;
+        return $this->marchandId;
     }
 
-    public function setMarchand(?Marchand $marchand): self
+    public function setMarchandId(?string $marchandId): self
     {
-        $this->marchand = $marchand;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Avis[]
-     */
-    public function getAvis(): Collection
-    {
-        return $this->avis;
-    }
-
-    public function addAvi(Avis $avi): self
-    {
-        if (!$this->avis->contains($avi)) {
-            $this->avis[] = $avi;
-            $avi->setProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAvi(Avis $avi): self
-    {
-        if ($this->avis->removeElement($avi)) {
-            // set the owning side to null (unless already changed)
-            if ($avi->getProduct() === $this) {
-                $avi->setProduct(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Command[]
-     */
-    public function getCommand(): Collection
-    {
-        return $this->command;
-    }
-
-    public function addCommand(Command $command): self
-    {
-        if (!$this->command->contains($command)) {
-            $this->command[] = $command;
-            $command->setProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommand(Command $command): self
-    {
-        if ($this->command->removeElement($command)) {
-            // set the owning side to null (unless already changed)
-            if ($command->getProduct() === $this) {
-                $command->setProduct(null);
-            }
-        }
+        $this->marchandId = $marchandId;
 
         return $this;
     }

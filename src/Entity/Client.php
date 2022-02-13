@@ -31,15 +31,15 @@ class Client
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $password;
 
-    #[ORM\ManyToOne(targetEntity: Marchand::class, inversedBy: 'client')]
+    //#[ORM\ManyToOne(targetEntity: Marchand::class, inversedBy: 'client')]
     #[ORM\JoinColumn(nullable: false)]
     private $marchand;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Avis::class)]
-    private $avis;
+    //#[ORM\OneToMany(mappedBy: 'client', targetEntity: Avis::class)]
+    //private $avis;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Command::class, orphanRemoval: true)]
-    private $command;
+    //#[ORM\OneToMany(mappedBy: 'client', targetEntity: Command::class, orphanRemoval: true)]
+    //private $command;
 
     public function __construct()
     {
@@ -112,63 +112,63 @@ class Client
         return $this;
     }
 
-    /**
-     * @return Collection|Avis[]
-     */
-    public function getAvis(): Collection
-    {
-        return $this->avis;
-    }
+    ///**
+    // * @return Collection|Avis[]
+    // */
+    //public function getAvis(): Collection
+    //{
+    //    return $this->avis;
+    //}
 
-    public function addAvi(Avis $avi): self
-    {
-        if (!$this->avis->contains($avi)) {
-            $this->avis[] = $avi;
-            $avi->setClient($this);
-        }
+    //public function addAvi(Avis $avi): self
+    //{
+    //    if (!$this->avis->contains($avi)) {
+    //        $this->avis[] = $avi;
+    //        $avi->setClient($this);
+    //    }
 
-        return $this;
-    }
+    //    return $this;
+    //}
 
-    public function removeAvi(Avis $avi): self
-    {
-        if ($this->avis->removeElement($avi)) {
-            // set the owning side to null (unless already changed)
-            if ($avi->getClient() === $this) {
-                $avi->setClient(null);
-            }
-        }
+    //public function removeAvi(Avis $avi): self
+    //{
+    //    if ($this->avis->removeElement($avi)) {
+    //        // set the owning side to null (unless already changed)
+    //        if ($avi->getClient() === $this) {
+    //            $avi->setClient(null);
+    //        }
+    //    }
 
-        return $this;
-    }
+    //    return $this;
+    //}
 
-    /**
-     * @return Collection|Command[]
-     */
-    public function getCommand(): Collection
-    {
-        return $this->command;
-    }
+    ///**
+    // * @return Collection|Command[]
+    // */
+    //public function getCommand(): Collection
+    //{
+    //    return $this->command;
+    //}
 
-    public function addCommand(Command $command): self
-    {
-        if (!$this->command->contains($command)) {
-            $this->command[] = $command;
-            $command->setClient($this);
-        }
+    //public function addCommand(Command $command): self
+    //{
+    //    if (!$this->command->contains($command)) {
+    //        $this->command[] = $command;
+    //        $command->setClient($this);
+    //    }
 
-        return $this;
-    }
+    //    return $this;
+    //}
 
-    public function removeCommand(Command $command): self
-    {
-        if ($this->command->removeElement($command)) {
-            // set the owning side to null (unless already changed)
-            if ($command->getClient() === $this) {
-                $command->setClient(null);
-            }
-        }
+    //public function removeCommand(Command $command): self
+    //{
+    //    if ($this->command->removeElement($command)) {
+    //        // set the owning side to null (unless already changed)
+    //        if ($command->getClient() === $this) {
+    //            $command->setClient(null);
+    //        }
+    //    }
 
-        return $this;
-    }
+    //    return $this;
+    //}
 }

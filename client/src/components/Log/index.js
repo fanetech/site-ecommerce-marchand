@@ -4,7 +4,7 @@ import Navbar from '../Navbar';
 import LogSecond from './LogSecond';
 import LogThird from './LogThird';
 const Index = () => {
-	const [connexion, setConnexion] = useState(true);
+	const [connexion, setConnexion] = useState(false);
 
 	return (
 		<div className="log-container">

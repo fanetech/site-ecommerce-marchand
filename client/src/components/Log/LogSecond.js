@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const LogSecond = ({ setConnexion }) => {
+	const [isLoading, setIsLoading] = useState(false);
+
 	const [errorInfo, setErrorInfo] = useState('');
 	const [primary, setPrimary] = useState(true);
 	const [email, setEmail] = useState('');
@@ -54,9 +56,13 @@ const LogSecond = ({ setConnexion }) => {
 
 		if (id === 'second') {
 			setErrorInfo('');
-			if (name && firstName && store && description) {
-				setSecond(false);
-				setThirdLegalPage(true);
+			if (name && firstName && store && description && phone) {
+				if (Number(phone)) {
+					setSecond(false);
+					setThirdLegalPage(true);
+				} else {
+					setErrorInfo('Le champ numéro doit être des chiffres');
+				}
 			} else {
 				setErrorInfo('veuillez remplir bien remplir toutes les champs');
 			}
@@ -91,7 +97,7 @@ const LogSecond = ({ setConnexion }) => {
 			setErrorInfo('');
 			if (userPage) {
 				setThirdUserPage(false);
-				setShowPicture(true);
+				setThirdFaqPage(true);
 			} else {
 				setErrorInfo(
 					'veuillez remplir bien remplir vos conditions générales de ventes ',
@@ -125,6 +131,7 @@ const LogSecond = ({ setConnexion }) => {
 
 		//create store
 		if (id === 'create') {
+			setIsLoading(true);
 			const data = {
 				name: name,
 				firstName: firstName,
@@ -132,22 +139,37 @@ const LogSecond = ({ setConnexion }) => {
 				email: email,
 				phone: Number(phone),
 				compte: '0',
-				logo: 'client/public/img/logo.png',
-				favicon: 'client/public/img/favicon.ico',
 				description: description,
 				baniere: 'client/public/img/banniere.jpg',
 				legalPage: legalPage,
+				logo: '/logo',
+				favicon: '/favicon',
 				sellPage: statusPage,
 				useTerms: userPage,
 				faq: faqPage,
 				password: password,
 			};
-			//console.log(data);
+
 			axios
 				.post('http://localhost:8000/api/marchands', data)
 				.then(res => {
-					document.cookie = 'jwt=' + res.data.id + '; path=/;expires=' + data;
-					setConnexion(true);
+					console.log(res);
+
+					axios
+						.post(
+							`http://localhost:8000/api/marchand/${res.data.id}/logo`,
+							file,
+						)
+						.then(res => {
+							setIsLoading(false);
+							document.cookie =
+								'jwt=' + res.data.id + '; path=/;expires=' + data;
+							console.log(res);
+							setConnexion(true);
+						})
+						.catch(err => {
+							console.log(err);
+						});
 				})
 				.catch(err => {
 					console.log(err);
@@ -396,6 +418,7 @@ const LogSecond = ({ setConnexion }) => {
 							<button class="btn btn-primary" id="create" onClick={handleLog}>
 								Créer
 							</button>
+							{isLoading && <i className="fas fa-spinner fa-pulse"></i>}
 						</div>
 					</div>
 				)}

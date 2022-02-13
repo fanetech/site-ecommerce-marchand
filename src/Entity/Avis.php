@@ -21,11 +21,11 @@ class Avis
     #[ORM\Column(type: 'integer')]
     private $note;
 
-    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'avis')]
+    //#[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'avis')]
     #[ORM\JoinColumn(nullable: false)]
     private $product;
 
-    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'avis')]
+    //#[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'avis')]
     #[ORM\JoinColumn(nullable: false)]
     private $client;
 

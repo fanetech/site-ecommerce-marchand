@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import LogPrimary from './LogPrimary';
 
 const LogThird = ({ handledLog }) => {
@@ -47,7 +48,7 @@ const LogThird = ({ handledLog }) => {
 			}
 
 			//send main1 data to DB
-			setMain1btn(false);
+			//setMain1btn(false);
 		}
 
 		//test variable main2 and send to DB
@@ -73,7 +74,15 @@ const LogThird = ({ handledLog }) => {
 	const handledUpload = e => {
 		let id = e.target.id;
 		if (id === 'ban') {
-			setShowBan(false);
+			axios
+				.post('http://localhost:8000/api/marchand/6/banniere', fileBanniere)
+				.then(res => {
+					setShowBan(false);
+					console.log(res);
+				})
+				.catch(err => {
+					console.log(err);
+				});
 		}
 		if (id === 'fav') {
 			setShowFav(false);
@@ -104,8 +113,10 @@ const LogThird = ({ handledLog }) => {
 
 	useEffect(() => {
 		if (title2 || description2 || fileImage2) {
-			setMain1btn(true);
 			setMain2btn(true);
+		}
+		if (title1 || description1 || fileImage1) {
+			setMain1btn(true);
 		}
 	}, [title1, description1, fileImage1, title2, description2, fileImage2]);
 
