@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const LogSecond = ({ setConnexion }) => {
+const MarchandSignUp = ({ setConnexion }) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [errorInfo, setErrorInfo] = useState('');
@@ -426,4 +426,4 @@ const LogSecond = ({ setConnexion }) => {
 	);
 };
 
-export default LogSecond;
+export default MarchandSignUp;

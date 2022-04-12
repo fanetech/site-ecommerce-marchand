@@ -1,10 +1,10 @@
 import React from 'react';
-import Marchand from '../espaces/Marchand';
+import Log from '../components/Log';
 
 const Home = () => {
 	return (
 		<div className="home-page">
-			<Marchand />
+			<Log />
 		</div>
 	);
 };

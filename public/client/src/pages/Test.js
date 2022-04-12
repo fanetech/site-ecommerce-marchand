@@ -1,42 +1,42 @@
-import React from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 
-const Test = () => {
-	const handleTest = e => {
-		e.preventDefault();
-		console.log('entre');
-		const data = {
-			name: 'lougue',
-			firstName: 'franck',
-			storeName: 'sote',
-			email: 'franck@gmail.com',
-			phone: 0,
-			compte: '0',
-			logo: '/logo',
-			favicon: '/favicon',
-			description: 'ventement',
-			baniere: '/banniere',
-			legalPage: 'string',
-			sellPage: 'string',
-			useTerms: 'string',
-			faq: 'string',
-			createdAt: '2022-02-09T23:27:44.573Z',
-			updatedAt: '2022-02-09T23:27:44.573Z',
-			password: 'franck',
-		};
-		axios
-			.post('http://localhost:8000/api/marchands', data)
-			.then(res => {
-				console.log('bien');
-			})
-			.catch(err => {
-				console.log(err);
-			});
-	};
-
+const Test = ({ log, errorInfo }) => {
 	return (
-		<div>
-			<button onClick={handleTest}>envoyer</button>
+		<div className="test-container">
+			<form id="contactForm" data-sb-form-api-token="API_TOKEN">
+				{log && (
+					<div class="row input-group-newsletter">
+						<h1 class="fst-italic lh-1 mb-4">
+							Construisez votre boutique e-commerce
+						</h1>
+						<p class="mb-5">
+							Propulser votre entreprise en le rendant plus visible.Des millions
+							de marques parmi les plus prospères au monde font confiance à web
+							site pour vendre, expédier et traiter rapidemment leurs commandes.
+						</p>
+						<div class="row">
+							<input
+								class="form-control"
+								id="email"
+								type="email"
+								placeholder="Entre votre addresse email..."
+							/>
+							<input
+								class="form-control mt-2"
+								id="password"
+								type="password"
+								placeholder="Mot de passe"
+							/>
+						</div>
+						<div className="error">{errorInfo}</div>
+						<div class="row mt-2">
+							<button class="btn btn-primary" id="primary">
+								Essaie
+							</button>
+						</div>
+					</div>
+				)}
+			</form>
 		</div>
 	);
 };

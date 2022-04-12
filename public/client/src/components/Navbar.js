@@ -39,16 +39,18 @@ const Navbar = () => {
 							</li>
 						</ul>
 						<form class="d-flex">
-							<button class="btn btn-outline-dark" type="submit">
-								Connexion
-							</button>
+							<NavLink exat to="user">
+								<button class="btn btn-outline-dark" type="submit">
+									Connexion
+								</button>
+							</NavLink>
 						</form>
 						<form class="d-flex ml-2">
-							<NavLink exact to="/test">
+							{/*<NavLink exact to="/test">
 								<button class="btn btn-outline-dark" type="submit">
 									test
 								</button>
-							</NavLink>
+							</NavLink>*/}
 						</form>
 					</div>
 				</div>

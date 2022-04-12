@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Navbar from '../Navbar';
+import MarchandConnected from './MarchandConnected';
 
-import LogSecond from './LogSecond';
-import LogThird from './LogThird';
+import MarchandSignUp from './MarchandSignUp';
 const Index = () => {
 	const [connexion, setConnexion] = useState(true);
 
@@ -25,7 +25,7 @@ const Index = () => {
 					<div class="masthead left-side">
 						<div class="masthead-content text">
 							<div class="container-fluid px-4 px-lg-0">
-								<LogSecond setConnexion={setConnexion} />
+								<MarchandSignUp setConnexion={setConnexion} />
 							</div>
 						</div>
 					</div>
@@ -44,7 +44,7 @@ const Index = () => {
 					</div>
 				</>
 			)}
-			{connexion && <LogThird />}
+			{connexion && <MarchandConnected />}
 		</div>
 	);
 };

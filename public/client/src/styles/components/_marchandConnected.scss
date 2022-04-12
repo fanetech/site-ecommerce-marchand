@@ -1,0 +1,31 @@
+.marchand-connected-container {
+	display: grid;
+	grid-template-columns: 150px 100%;
+	grid-template-areas: 'sidebar client';
+	.marchand-sidebar-container {
+		grid-area: sidebar;
+		position: relative;
+		background: rgb(255, 255, 255);
+		border: 1px solid rgb(184, 184, 184);
+		.sidebar-container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			.icons-sidebar {
+				position: absolute;
+				left: 10px;
+				top: 10px;
+				button {
+					background: rgb(139, 139, 137);
+					display: block;
+					margin-top: 10px;
+				}
+			}
+		}
+	}
+	.client-container {
+		grid-area: client;
+		color: black;
+	}
+}

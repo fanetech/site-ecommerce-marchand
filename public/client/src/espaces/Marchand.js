@@ -1,11 +1,10 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
-import Log from '../components/Log';
+import Home from '../pages/Home';
 
 const Marchand = () => {
 	return (
 		<div className="marchand">
-			<Log />
+			<Home />
 		</div>
 	);
 };

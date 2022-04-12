@@ -17,6 +17,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiFilter;
+
 #[ORM\Entity(repositoryClass: MarchandRepository::class)]
 /**
  * @Vich\Uploadable()
@@ -70,6 +73,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['password' => 'exact', 'email' => 'exact'])]
+
+
+
 class Marchand
 {
     #[ORM\Id]

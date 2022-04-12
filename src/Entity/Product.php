@@ -13,6 +13,8 @@ use App\Controller\ProductController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiFilter;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 /**
@@ -52,6 +54,8 @@ use Symfony\Component\HttpFoundation\File\File;
         ],
     ]
 )]
+
+#[ApiFilter(SearchFilter::class, properties: ['marchandId' => 'exact'])]
 class Product
 {
     #[ORM\Id]
