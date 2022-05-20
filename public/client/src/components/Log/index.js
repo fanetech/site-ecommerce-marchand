@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Navbar from '../Navbar';
 import MarchandConnected from './MarchandConnected';
+import MarchandSignIn from './MarchandSignIn';
 
 import MarchandSignUp from './MarchandSignUp';
 const Index = () => {
-	const [connexion, setConnexion] = useState(true);
+	const [connexion, setConnexion] = useState(false);
+	const [isConnect, setIsConnect] = useState(true);
 
 	return (
 		<div className="log-container">
@@ -25,7 +27,18 @@ const Index = () => {
 					<div class="masthead left-side">
 						<div class="masthead-content text">
 							<div class="container-fluid px-4 px-lg-0">
-								<MarchandSignUp setConnexion={setConnexion} />
+								{isConnect && (
+									<MarchandSignUp
+										setConnexion={setConnexion}
+										setIsConnect={setIsConnect}
+									/>
+								)}
+								{!isConnect && (
+									<MarchandSignIn
+										setConnexion={setConnexion}
+										setIsConnect={setIsConnect}
+									/>
+								)}
 							</div>
 						</div>
 					</div>

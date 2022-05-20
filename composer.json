@@ -68,6 +68,7 @@
         "symfony/polyfill-php72": "*"
     },
     "scripts": {
+        "start": "php -S localhost:8000 -t public",
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"

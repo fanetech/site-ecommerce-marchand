@@ -6,8 +6,10 @@ const MarchandSignUp = ({ setConnexion }) => {
 
 	const [errorInfo, setErrorInfo] = useState('');
 	const [primary, setPrimary] = useState(true);
+	const [primaryConfirm, setPrimaryConfirm] = useState(false);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [passwordConfirme, setPasswordConfirme] = useState('');
 
 	//second
 	const [second, setSecond] = useState(false);
@@ -46,9 +48,22 @@ const MarchandSignUp = ({ setConnexion }) => {
 		let id = e.target.id;
 		if (id === 'primary') {
 			setErrorInfo('');
-			if (password && email) {
+			if (email) {
 				setPrimary(false);
-				setSecond(true);
+				setPrimaryConfirm(true);
+			} else {
+				setErrorInfo('veuillez remplir votre email et votre mot de passe');
+			}
+		}
+		if (id === 'primaryConfirm') {
+			setErrorInfo('');
+			if (password && passwordConfirme) {
+				if (password === passwordConfirme) {
+					setPrimaryConfirm(false);
+					setSecond(true);
+				} else {
+					setErrorInfo('Mot de passe non identique');
+				}
 			} else {
 				setErrorInfo('veuillez remplir votre email et votre mot de passe');
 			}
@@ -204,6 +219,26 @@ const MarchandSignUp = ({ setConnexion }) => {
 								placeholder="Entre votre addresse email..."
 								onChange={e => setEmail(e.target.value)}
 							/>
+							{/*<input
+								class="form-control mt-2"
+								id="password"
+								type="password"
+								placeholder="Mot de passe"
+								onChange={e => setPassword(e.target.value)}
+							/>*/}
+						</div>
+						<div className="error">{errorInfo}</div>
+						<div class="row mt-2">
+							<button class="btn btn-primary" id="primary" onClick={handleLog}>
+								Essaie
+							</button>
+						</div>
+					</div>
+				)}
+				{primaryConfirm && (
+					<div class="row input-group-newsletter">
+						<h1 class="fst-italic lh-1 mb-4">Creer votre mot de passe</h1>
+						<div class="row">
 							<input
 								class="form-control mt-2"
 								id="password"
@@ -211,11 +246,22 @@ const MarchandSignUp = ({ setConnexion }) => {
 								placeholder="Mot de passe"
 								onChange={e => setPassword(e.target.value)}
 							/>
+							<input
+								class="form-control mt-2"
+								id="passwordConfirm"
+								type="password"
+								placeholder="Confirmer mot de passe"
+								onChange={e => setPasswordConfirme(e.target.value)}
+							/>
 						</div>
 						<div className="error">{errorInfo}</div>
 						<div class="row mt-2">
-							<button class="btn btn-primary" id="primary" onClick={handleLog}>
-								Essaie
+							<button
+								class="btn btn-primary"
+								id="primaryConfirm"
+								onClick={handleLog}
+							>
+								Enregistrer
 							</button>
 						</div>
 					</div>

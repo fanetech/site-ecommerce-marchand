@@ -46,11 +46,11 @@ const Navbar = () => {
 							</NavLink>
 						</form>
 						<form class="d-flex ml-2">
-							{/*<NavLink exact to="/test">
+							<NavLink exact to="/test">
 								<button class="btn btn-outline-dark" type="submit">
 									test
 								</button>
-							</NavLink>*/}
+							</NavLink>
 						</form>
 					</div>
 				</div>
