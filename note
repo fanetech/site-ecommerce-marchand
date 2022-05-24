@@ -1,5 +1,0 @@
-### template user page
-https://startbootstrap.com/previews/shop-homepage
-
-### create DB command
-php bin/console doctrine:database:create
