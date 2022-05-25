@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
-import { getCookie } from '../utils';
+import { getCookie } from '../../utility/utils';
 import Product from './Product';
 import ClientView from './ClientView';
 import MarchandSideBar from './MarchandSideBar';

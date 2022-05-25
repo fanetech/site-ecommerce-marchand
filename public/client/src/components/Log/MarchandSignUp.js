@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASIC from '../../utility/api.service';
 
 const MarchandSignUp = ({ setConnexion }) => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -59,8 +60,20 @@ const MarchandSignUp = ({ setConnexion }) => {
 			setErrorInfo('');
 			if (password && passwordConfirme) {
 				if (password === passwordConfirme) {
-					setPrimaryConfirm(false);
-					setSecond(true);
+					const data = {
+						email: email,
+						role: 'ROLE_MARCHAND',
+						password: password,
+					};
+					API_BASIC.post('/authenticator/register', data)
+						.then(res => {
+							console.log(res);
+						})
+						.catch(err => {
+							console.error('signUp error =', err);
+						});
+					//setPrimaryConfirm(false);
+					//setSecond(true);
 				} else {
 					setErrorInfo('Mot de passe non identique');
 				}

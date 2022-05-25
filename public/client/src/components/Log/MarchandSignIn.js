@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import API_BASIC from '../../utility/api.service';
 
 const MarchandSignIn = ({ setIsConnect }) => {
 	const [email, setEmail] = useState('');
@@ -11,6 +12,13 @@ const MarchandSignIn = ({ setIsConnect }) => {
 				email: email,
 				password: password,
 			};
+			API_BASIC.post('/authenticator/login', data)
+				.then(res => {
+					console.log(res);
+				})
+				.catch(err => {
+					console.error('signIn error =', err);
+				});
 			setIsConnect(true);
 			console.log('bien passé');
 			//send to server of verify
