@@ -65,15 +65,20 @@ const MarchandSignUp = ({ setConnexion }) => {
 						role: 'ROLE_MARCHAND',
 						password: password,
 					};
-					API_BASIC.post('/authenticator/register', data)
+
+					API_BASIC.post('/authenticator/register', data, {
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					})
 						.then(res => {
 							console.log(res);
+							setPrimaryConfirm(false);
+							setSecond(true);
 						})
 						.catch(err => {
 							console.error('signUp error =', err);
 						});
-					//setPrimaryConfirm(false);
-					//setSecond(true);
 				} else {
 					setErrorInfo('Mot de passe non identique');
 				}
@@ -160,6 +165,7 @@ const MarchandSignUp = ({ setConnexion }) => {
 		//create store
 		if (id === 'create') {
 			setIsLoading(true);
+			setConnexion(true);
 			const data = {
 				name: name,
 				firstName: firstName,
@@ -178,30 +184,30 @@ const MarchandSignUp = ({ setConnexion }) => {
 				password: password,
 			};
 
-			axios
-				.post('http://localhost:8000/api/marchands', data)
-				.then(res => {
-					console.log(res);
+			//axios
+			//	.post('http://localhost:8000/api/marchands', data)
+			//	.then(res => {
+			//		console.log(res);
 
-					axios
-						.post(
-							`http://localhost:8000/api/marchand/${res.data.id}/logo`,
-							file,
-						)
-						.then(res => {
-							setIsLoading(false);
-							document.cookie =
-								'jwt=' + res.data.id + '; path=/;expires=' + data;
-							console.log(res);
-							setConnexion(true);
-						})
-						.catch(err => {
-							console.log(err);
-						});
-				})
-				.catch(err => {
-					console.log(err);
-				});
+			//		axios
+			//			.post(
+			//				`http://localhost:8000/api/marchand/${res.data.id}/logo`,
+			//				file,
+			//			)
+			//			.then(res => {
+			//				setIsLoading(false);
+			//				document.cookie =
+			//					'jwt=' + res.data.id + '; path=/;expires=' + data;
+			//				console.log(res);
+			//				setConnexion(true);
+			//			})
+			//			.catch(err => {
+			//				console.log(err);
+			//			});
+			//	})
+			//	.catch(err => {
+			//		console.log(err);
+			//	});
 		}
 	};
 

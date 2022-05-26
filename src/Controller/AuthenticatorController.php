@@ -55,7 +55,9 @@ class AuthenticatorController extends AbstractController
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles()
-            ], Response::HTTP_CREATED);
+            ], Response::HTTP_CREATED, [
+                'Allow-Origin' => '*',
+            ]);
         }
         return $this->json([
             'msg' => 'error',

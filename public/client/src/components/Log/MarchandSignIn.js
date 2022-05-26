@@ -1,29 +1,49 @@
 import { useState } from 'react';
 import API_BASIC from '../../utility/api.service';
+import BtnView from './BtnView';
 
-const MarchandSignIn = ({ setIsConnect }) => {
+const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [errorInfo, setErrorInfo] = useState('');
 
-	const handeConnect = () => {
-		if (email && password) {
-			const data = {
-				email: email,
-				password: password,
-			};
-			API_BASIC.post('/authenticator/login', data)
-				.then(res => {
-					console.log(res);
-				})
-				.catch(err => {
-					console.error('signIn error =', err);
-				});
-			setIsConnect(true);
-			console.log('bien passé');
-			//send to server of verify
-		} else {
-			setErrorInfo('Veuillez saisir tout les champs');
+	const handeConnect = id => {
+		const idAction = id;
+		switch (idAction) {
+			case 'connexion':
+				if (email && password) {
+					const data = {
+						username: email,
+						password: password,
+					};
+
+					//send to server of verify
+					API_BASIC.post('/authenticator/login', data, {
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					})
+						.then(res => {
+							document.cookie =
+								'marchandJWT=' + res.data.token + '; path=/;expires=' + data;
+							console.log(res);
+							setConnexion(true);
+						})
+						.catch(err => {
+							console.error('signIn error =', err);
+						});
+				} else {
+					setErrorInfo('Veuillez saisir tout les champs');
+				}
+
+				break;
+			case 'signUp':
+				setSignUp(true);
+
+				break;
+
+			default:
+				break;
 		}
 	};
 	return (
@@ -46,11 +66,9 @@ const MarchandSignIn = ({ setIsConnect }) => {
 				/>
 			</div>
 			<div className="error">{errorInfo}</div>
-			<div class="row mt-2">
-				<button class="btn btn-primary" id="connexion" onClick={handeConnect}>
-					connexion
-				</button>
-			</div>
+
+			{/* display btn  */}
+			<BtnView handeConnect={handeConnect} />
 		</div>
 	);
 };
