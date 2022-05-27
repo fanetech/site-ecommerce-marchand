@@ -7,9 +7,9 @@ const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 	const [password, setPassword] = useState('');
 	const [errorInfo, setErrorInfo] = useState('');
 
-	const handeConnect = id => {
-		const idAction = id;
-		switch (idAction) {
+	const handleLog = idAction => {
+		const id = idAction;
+		switch (id) {
 			case 'connexion':
 				if (email && password) {
 					const data = {
@@ -54,6 +54,7 @@ const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 					class="form-control mt-2"
 					id="email"
 					type="email"
+					defaultValue={email}
 					placeholder="Email"
 					onChange={e => setEmail(e.target.value)}
 				/>
@@ -68,7 +69,7 @@ const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 			<div className="error">{errorInfo}</div>
 
 			{/* display btn  */}
-			<BtnView handeConnect={handeConnect} />
+			<BtnView handleLog={handleLog} type={'standard'} />
 		</div>
 	);
 };

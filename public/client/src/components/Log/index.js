@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../Navbar';
-import MarchandConnected from './MarchandConnected';
+import MarchandConnected from '../../pages/MarchandConnected';
 import MarchandSignIn from './MarchandSignIn';
 
 import MarchandSignUp from './MarchandSignUp';
@@ -30,7 +30,7 @@ const Index = () => {
 								{signUp && (
 									<MarchandSignUp
 										setConnexion={setConnexion}
-										setIsConnect={setSignUp}
+										setSignUp={setSignUp}
 									/>
 								)}
 								{!signUp && (
