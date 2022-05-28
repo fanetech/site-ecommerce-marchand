@@ -11,20 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[Route('api/authenticator')]
 class AuthenticatorController extends AbstractController
 {
-    //private $token;
-    //private $user;
-    //public function __construct(TokenStorageInterface $tokenStorage)
-    //{
-    //    $this->token = $tokenStorage->getToken();
-    //    $user = $this->token->getUser();
-    //    $jwtManager = $this->get('lexik_jwt_authentication.jwt_manager');
-    //    $token = $jwtManager->create($user);
-    //}
     #[Route('/register', name: 'api.authenticator.register', methods: "POST")]
     public function register(Request $request, UserPasswordHasherInterface $hasher, ManagerRegistry $doctrine): JsonResponse
     {
@@ -83,5 +73,38 @@ class AuthenticatorController extends AbstractController
             "msg" => "error",
             "content" => "Utilisateur non trouvé"
         ], Response::HTTP_UNAUTHORIZED);
+    }
+
+    #[Route('/checkAuth', name: 'api.authenticator.checkAuth', methods: "GET")]
+    public function checkAuth(ManagerRegistry $doctrine, Request $request): JsonResponse
+    {
+        $token = $request->headers->get('Authorization');
+        if (!$token) {
+            return $this->json([
+                "msg" => "error",
+                "content" => "no token"
+            ]);
+        }
+        $tokenParts = explode(".", $token);
+        $tokenPayload = base64_decode($tokenParts[1]);
+        $jwtPayload = json_decode($tokenPayload);
+        $identificator = $jwtPayload->username;
+
+        //get user data
+        $repo = $doctrine->getRepository(User::class);
+        $user = $repo->findBy(["email" => $identificator]);
+
+        //handling to data
+        foreach ($user as $userData) {
+            $res[] = array(
+                'id' => $userData->getId(),
+                'email' => $userData->getEmail(),
+                'role' => $userData->getRoles()
+            );
+        }
+        return $this->json([
+            "msg" => "success",
+            "user" => $res
+        ]);
     }
 }

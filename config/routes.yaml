@@ -3,3 +3,6 @@
 #    controller: App\Controller\DefaultController::index
 api_login_check:
   path: /api/authenticator/login_check
+#app_logout:
+#  path: /api/authenticator/logout
+#  methods: GET

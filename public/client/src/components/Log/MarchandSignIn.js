@@ -6,30 +6,29 @@ const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [errorInfo, setErrorInfo] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleLog = idAction => {
 		const id = idAction;
 		switch (id) {
 			case 'connexion':
 				if (email && password) {
+					setIsLoading(true);
 					const data = {
 						username: email,
 						password: password,
 					};
 
 					//send to server of verify
-					API_BASIC.post('/authenticator/login', data, {
-						headers: {
-							'Content-Type': 'application/json',
-						},
-					})
+					API_BASIC.post('/authenticator/login', data)
 						.then(res => {
 							document.cookie =
 								'marchandJWT=' + res.data.token + '; path=/;expires=' + data;
 							console.log(res);
-							setConnexion(true);
+							setIsLoading(false);
 						})
 						.catch(err => {
+							setIsLoading(false);
 							console.error('signIn error =', err);
 						});
 				} else {
@@ -69,7 +68,7 @@ const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 			<div className="error">{errorInfo}</div>
 
 			{/* display btn  */}
-			<BtnView handleLog={handleLog} type={'standard'} />
+			<BtnView handleLog={handleLog} type={'standard'} isLoading={isLoading} />
 		</div>
 	);
 };

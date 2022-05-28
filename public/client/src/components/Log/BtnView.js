@@ -1,6 +1,7 @@
 import React from 'react';
+import Loader from '../Loader';
 
-const BtnView = ({ handleLog, type }) => {
+const BtnView = ({ handleLog, type, isLoading }) => {
 	const handleBtn = e => {
 		e.preventDefault();
 		const id = e.target.id;
@@ -17,13 +18,17 @@ const BtnView = ({ handleLog, type }) => {
 						</h4>
 					</div>
 					<div className="col-2"></div>
-					<button
-						class="btn btn-primary col"
-						id="connexion"
-						onClick={handleBtn}
-					>
-						connexion
-					</button>
+					{isLoading ? (
+						<Loader />
+					) : (
+						<button
+							class="btn btn-primary col"
+							id="connexion"
+							onClick={handleBtn}
+						>
+							connexion
+						</button>
+					)}
 				</div>
 			)}
 
@@ -32,7 +37,7 @@ const BtnView = ({ handleLog, type }) => {
 				<div class="row mt-2">
 					<div class="col siginBtn">
 						<h4 id="signUp" onClick={handleBtn}>
-							Vous n'avez pas de compte?
+							Vous avez déja un compte?
 						</h4>
 					</div>
 					<div className="col-2"></div>

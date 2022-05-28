@@ -33,6 +33,8 @@ security:
       provider: app_user_provider
       json_login:
         check_path: api.authenticator.login
+      #logout:
+      #  path: api.authenticator.logout
 
     # activate different ways to authenticate
     # https://symfony.com/doc/current/security.html#the-firewall
