@@ -1,21 +1,48 @@
 import { useState } from 'react';
+import API_BASIC from '../../utility/api.service';
+import BtnView from './BtnView';
 
-const MarchandSignIn = ({ setIsConnect }) => {
+const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [errorInfo, setErrorInfo] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 
-	const handeConnect = () => {
-		if (email && password) {
-			const data = {
-				email: email,
-				password: password,
-			};
-			setIsConnect(true);
-			console.log('bien passé');
-			//send to server of verify
-		} else {
-			setErrorInfo('Veuillez saisir tout les champs');
+	const handleLog = idAction => {
+		const id = idAction;
+		switch (id) {
+			case 'connexion':
+				if (email && password) {
+					setIsLoading(true);
+					const data = {
+						username: email,
+						password: password,
+					};
+
+					//send to server of verify
+					API_BASIC.post('/authenticator/login', data)
+						.then(res => {
+							document.cookie =
+								'marchandJWT=' + res.data.token + '; path=/;expires=' + data;
+							console.log(res);
+							setIsLoading(false);
+						})
+						.catch(err => {
+							setIsLoading(false);
+							console.error('signIn error =', err);
+						});
+				} else {
+					setErrorInfo('Veuillez saisir tout les champs');
+				}
+
+				break;
+			case 'signUp':
+				setSignUp(true);
+
+				break;
+
+			default:
+				break;
 		}
 	};
 	return (
@@ -26,6 +53,7 @@ const MarchandSignIn = ({ setIsConnect }) => {
 					class="form-control mt-2"
 					id="email"
 					type="email"
+					defaultValue={email}
 					placeholder="Email"
 					onChange={e => setEmail(e.target.value)}
 				/>
@@ -38,11 +66,9 @@ const MarchandSignIn = ({ setIsConnect }) => {
 				/>
 			</div>
 			<div className="error">{errorInfo}</div>
-			<div class="row mt-2">
-				<button class="btn btn-primary" id="connexion" onClick={handeConnect}>
-					connexion
-				</button>
-			</div>
+
+			{/* display btn  */}
+			<BtnView handleLog={handleLog} type={'standard'} isLoading={isLoading} />
 		</div>
 	);
 };

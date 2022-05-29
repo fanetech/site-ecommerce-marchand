@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Home from '../pages/Home';
+import { uidContext } from '../AppContext';
+import MarchandConnected from '../pages/MarchandConnected';
 
 const Marchand = () => {
+	const uid = useContext(uidContext);
+
 	return (
 		<div className="marchand">
-			<Home />
+			{uid ? (
+				<>
+					<MarchandConnected />
+				</>
+			) : (
+				<>
+					<Home />
+				</>
+			)}
 		</div>
 	);
 };

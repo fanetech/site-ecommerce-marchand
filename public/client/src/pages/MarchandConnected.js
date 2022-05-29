@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
-import { getCookie } from '../utils';
-import Product from './Product';
-import ClientView from './ClientView';
-import MarchandSideBar from './MarchandSideBar';
+import { getCookie } from '../utility/utils';
+import Product from '../components/Log/Product';
+import ClientView from '../components/Log/ClientView';
+import MarchandSideBar from '../components/Log/MarchandSideBar';
 
 const MarchandConnected = ({ handledLog }) => {
 	//file upload variable and text variable to send DB

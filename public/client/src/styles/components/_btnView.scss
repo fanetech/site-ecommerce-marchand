@@ -1,0 +1,11 @@
+.siginBtn{
+	h4{
+		margin: auto 0;
+		font-size: 1.1rem;
+		font-weight: 400;
+		&:hover{
+			color:#2e9898;
+			cursor: pointer;
+		}
+	}
+}

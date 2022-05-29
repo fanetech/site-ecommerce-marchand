@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import API_BASIC from '../../utility/api.service';
+import BtnView from './BtnView';
+import MarchandSignIn from './MarchandSignIn';
 
-const MarchandSignUp = ({ setConnexion }) => {
+const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 	const [isLoading, setIsLoading] = useState(false);
+	const [btnType, setBtnType] = useState('essaie');
+	const [formSubmit, setFormSubmit] = useState(false);
 
 	const [errorInfo, setErrorInfo] = useState('');
 	const [primary, setPrimary] = useState(true);
@@ -43,152 +48,192 @@ const MarchandSignUp = ({ setConnexion }) => {
 
 	//validation information variable
 	const [showValid, setShowValid] = useState(false);
-	const handleLog = e => {
-		e.preventDefault();
-		let id = e.target.id;
-		if (id === 'primary') {
-			setErrorInfo('');
-			if (email) {
-				setPrimary(false);
+	const handleLog = idAction => {
+		let id = idAction;
+		setErrorInfo('');
+		switch (id) {
+			case 'signUp':
+				setSignUp(false);
+
+				break;
+			case 'essaie':
+				setErrorInfo('');
+				if (email) {
+					setPrimary(false);
+					setPrimaryConfirm(true);
+					setBtnType('password');
+				} else {
+					setErrorInfo('veuillez remplir votre email et votre mot de passe');
+				}
+
+				break;
+			case 'prePassword':
+				setPrimary(true);
+				setPrimaryConfirm(false);
+				setBtnType('essaie');
+				break;
+			case 'password':
+				setErrorInfo('');
+				if (password && passwordConfirme) {
+					if (password === passwordConfirme) {
+						const data = {
+							email: email,
+							role: 'ROLE_MARCHAND',
+							password: password,
+						};
+
+						//API_BASIC.post('/authenticator/register', data, {
+						//	headers: {
+						//		'Content-Type': 'application/json',
+						//	},
+						//})
+						//	.then(res => {
+						//		console.log(res);
+						//		setPrimaryConfirm(false);
+						//		setSecond(true);
+						//	})
+						//	.catch(err => {
+						//		console.error('signUp error =', err);
+						//	});
+						setPrimaryConfirm(false);
+						setSecond(true);
+						setBtnType('storeInfo');
+					} else {
+						setErrorInfo('Mot de passe non identique');
+					}
+				} else {
+					setErrorInfo('veuillez remplir votre email et votre mot de passe');
+				}
+				break;
+			case 'preInfo':
 				setPrimaryConfirm(true);
-			} else {
-				setErrorInfo('veuillez remplir votre email et votre mot de passe');
-			}
-		}
-		if (id === 'primaryConfirm') {
-			setErrorInfo('');
-			if (password && passwordConfirme) {
-				if (password === passwordConfirme) {
-					setPrimaryConfirm(false);
-					setSecond(true);
+				setSecond(false);
+				setBtnType('password');
+				break;
+			case 'info':
+				setErrorInfo('');
+				if (name && firstName && store && description && phone) {
+					if (Number(phone)) {
+						setSecond(false);
+						setThirdLegalPage(true);
+						setBtnType('legal');
+					} else {
+						setErrorInfo('Le champ numéro doit être des chiffres');
+					}
 				} else {
-					setErrorInfo('Mot de passe non identique');
+					setErrorInfo('veuillez bien remplir toutes les champs');
 				}
-			} else {
-				setErrorInfo('veuillez remplir votre email et votre mot de passe');
-			}
-		}
 
-		if (id === 'second') {
-			setErrorInfo('');
-			if (name && firstName && store && description && phone) {
-				if (Number(phone)) {
-					setSecond(false);
-					setThirdLegalPage(true);
-				} else {
-					setErrorInfo('Le champ numéro doit être des chiffres');
-				}
-			} else {
-				setErrorInfo('veuillez remplir bien remplir toutes les champs');
-			}
-		}
-
-		//legal page handled
-		if (id === 'legal') {
-			setErrorInfo('');
-			if (legalPage) {
+				break;
+			case 'preLegal':
+				setSecond(true);
 				setThirdLegalPage(false);
-				setThirdStatusPage(true);
-			} else {
-				setErrorInfo('veuillez remplir bien remplir votre page legal');
-			}
-		}
-
-		//status page handled
-		if (id === 'status') {
-			setErrorInfo('');
-			if (statusPage) {
+				setBtnType('storeInfo');
+				break;
+			case 'legalInfo':
+				if (legalPage) {
+					setErrorInfo('');
+					setThirdLegalPage(false);
+					setThirdStatusPage(true);
+					setBtnType('statusInfo');
+				} else {
+					setErrorInfo('veuillez entre vos pages légals');
+				}
+				break;
+			case 'preStatus':
+				setThirdLegalPage(true);
 				setThirdStatusPage(false);
-				setThirdUserPage(true);
-			} else {
-				setErrorInfo(
-					'veuillez remplir bien remplir vos conditions générales de ventes ',
-				);
-			}
-		}
-
-		//user terms page handled
-		if (id === 'user') {
-			setErrorInfo('');
-			if (userPage) {
+				setBtnType('legal');
+				break;
+			case 'status':
+				if (statusPage) {
+					setThirdStatusPage(false);
+					setThirdUserPage(true);
+					setBtnType('userInfo');
+				} else {
+					setErrorInfo(
+						'veuillez remplir bien remplir vos conditions générales de ventes ',
+					);
+				}
+				break;
+			case 'preUser':
+				setThirdStatusPage(true);
 				setThirdUserPage(false);
-				setThirdFaqPage(true);
-			} else {
-				setErrorInfo(
-					'veuillez remplir bien remplir vos conditions générales de ventes ',
-				);
-			}
-		}
-
-		//faq
-		if (id === 'faq') {
-			setErrorInfo('');
-			if (faqPage) {
+				setBtnType('statusInfo');
+				break;
+			case 'user':
+				setErrorInfo('');
+				if (userPage) {
+					setThirdUserPage(false);
+					setThirdFaqPage(true);
+					setBtnType('faqInfo');
+				} else {
+					setErrorInfo(
+						'veuillez remplir bien remplir vos conditions générales de ventes ',
+					);
+				}
+				break;
+			case 'preFaq':
+				setThirdUserPage(true);
 				setThirdFaqPage(false);
-				setShowPicture(true);
-			} else {
-				setErrorInfo(
-					'veuillez remplir bien remplir vos conditions générales de ventes ',
-				);
-			}
-		}
-
-		//upload logo
-		if (id === 'logo') {
-			setErrorInfo(' ');
-			if (file != null) {
+				setBtnType('userInfo');
+				break;
+			case 'faq':
+				setErrorInfo('');
+				if (faqPage) {
+					setThirdFaqPage(false);
+					setShowPicture(true);
+					setBtnType('fileInfo');
+				} else {
+					setErrorInfo(
+						'veuillez remplir bien remplir vos conditions générales de ventes ',
+					);
+				}
+				break;
+			case 'preFile':
+				setThirdFaqPage(true);
 				setShowPicture(false);
-				setShowValid(true);
-			} else {
-				setErrorInfo('veuillez charger une image pour votre logo ');
-			}
-		}
-
-		//create store
-		if (id === 'create') {
-			setIsLoading(true);
-			const data = {
-				name: name,
-				firstName: firstName,
-				storeName: store,
-				email: email,
-				phone: Number(phone),
-				compte: '0',
-				description: description,
-				baniere: 'client/public/img/banniere.jpg',
-				legalPage: legalPage,
-				logo: '/logo',
-				favicon: '/favicon',
-				sellPage: statusPage,
-				useTerms: userPage,
-				faq: faqPage,
-				password: password,
-			};
-
-			axios
-				.post('http://localhost:8000/api/marchands', data)
-				.then(res => {
-					console.log(res);
-
-					axios
-						.post(
-							`http://localhost:8000/api/marchand/${res.data.id}/logo`,
-							file,
-						)
-						.then(res => {
-							setIsLoading(false);
-							document.cookie =
-								'jwt=' + res.data.id + '; path=/;expires=' + data;
-							console.log(res);
-							setConnexion(true);
-						})
-						.catch(err => {
-							console.log(err);
-						});
-				})
-				.catch(err => {
-					console.log(err);
-				});
+				setBtnType('faqInfo');
+				break;
+			case 'file':
+				setErrorInfo(' ');
+				if (file != null) {
+					setShowPicture(false);
+					setShowValid(true);
+					setBtnType('create');
+				} else {
+					setErrorInfo('veuillez charger une image pour votre logo ');
+				}
+				break;
+			case 'preCreate':
+				setPrimary(true);
+				setShowValid(false);
+				setBtnType('essaie');
+				break;
+			case 'create':
+				const data = {
+					name: name,
+					firstName: firstName,
+					storeName: store,
+					email: email,
+					phone: Number(phone),
+					compte: '0',
+					description: description,
+					baniere: 'client/public/img/banniere.jpg',
+					legalPage: legalPage,
+					logo: '/logo',
+					favicon: '/favicon',
+					sellPage: statusPage,
+					useTerms: userPage,
+					faq: faqPage,
+					password: password,
+				};
+				console.log(data);
+				setFormSubmit(true);
+				//add to DB
+				break;
+			default:
+				break;
 		}
 	};
 
@@ -200,274 +245,235 @@ const MarchandSignUp = ({ setConnexion }) => {
 
 	return (
 		<>
-			<form id="contactForm" data-sb-form-api-token="API_TOKEN">
-				{primary && (
+			{formSubmit ? (
+				<>
+					<MarchandSignIn setSignUp={setSignUp} setConnexion={setConnexion} />
+					<h4 className="success submit-signup-info">
+						Enregistrement reussi, veuillez vous connecter
+					</h4>
+				</>
+			) : (
+				<form id="contactForm" data-sb-form-api-token="API_TOKEN">
 					<div class="row input-group-newsletter">
-						<h1 class="fst-italic lh-1 mb-4">
-							Construisez votre boutique e-commerce
-						</h1>
-						<p class="mb-5">
-							Propulser votre entreprise en le rendant plus visible.Des millions
-							de marques parmi les plus prospères au monde font confiance à web
-							site pour vendre, expédier et traiter rapidemment leurs commandes.
-						</p>
-						<div class="row">
-							<input
-								class="form-control"
-								id="email"
-								type="email"
-								placeholder="Entre votre addresse email..."
-								onChange={e => setEmail(e.target.value)}
-							/>
-							{/*<input
-								class="form-control mt-2"
-								id="password"
-								type="password"
-								placeholder="Mot de passe"
-								onChange={e => setPassword(e.target.value)}
-							/>*/}
-						</div>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button class="btn btn-primary" id="primary" onClick={handleLog}>
-								Essaie
-							</button>
-						</div>
-					</div>
-				)}
-				{primaryConfirm && (
-					<div class="row input-group-newsletter">
-						<h1 class="fst-italic lh-1 mb-4">Creer votre mot de passe</h1>
-						<div class="row">
-							<input
-								class="form-control mt-2"
-								id="password"
-								type="password"
-								placeholder="Mot de passe"
-								onChange={e => setPassword(e.target.value)}
-							/>
-							<input
-								class="form-control mt-2"
-								id="passwordConfirm"
-								type="password"
-								placeholder="Confirmer mot de passe"
-								onChange={e => setPasswordConfirme(e.target.value)}
-							/>
-						</div>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button
-								class="btn btn-primary"
-								id="primaryConfirm"
-								onClick={handleLog}
-							>
-								Enregistrer
-							</button>
-						</div>
-					</div>
-				)}
-
-				{/*second*/}
-				{second && (
-					<div class="row input-group-newsletter">
-						<h1 class="fst-italic lh-1 mb-4">
-							Entre les informations de votre boutique
-						</h1>
-						<div class="row">
-							<input
-								class="form-control"
-								id="name"
-								type="text"
-								placeholder="Entre votre nom..."
-								onChange={e => setName(e.target.value)}
-							/>
-							<input
-								class="form-control mt-2"
-								id="firstName"
-								type="text"
-								placeholder="Entre votre prenom..."
-								onChange={e => setFirstName(e.target.value)}
-							/>
-							<input
-								class="form-control mt-2"
-								id="store"
-								type="text"
-								placeholder="Entre le nom de votre boutique..."
-								onChange={e => setStore(e.target.value)}
-							/>
-							<input
-								class="form-control mt-2"
-								id="phone"
-								type="tel"
-								placeholder="Entre votre numéro de téléphone..."
-								onChange={e => setPhone(e.target.value)}
-							/>
-							<textarea
-								className="form-control mt-2"
-								id="decription"
-								placeholder="Décrivez votre boutique..."
-								onChange={e => setDescription(e.target.value)}
-							/>
-						</div>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button
-								className="btn btn-primary"
-								id="second"
-								onClick={handleLog}
-							>
-								Enregistrer
-							</button>
-						</div>
-					</div>
-				)}
-
-				{/* display legal page */}
-				{thirdLegalPage && (
-					<div className="row input-group-newsletter">
-						<h1 class="fst-italic lh-1 mb-4">
-							Entre les informations de vos pages légals
-						</h1>
-						<h5>Etape 1/4 : Page légal</h5>
-						<textarea
-							className="form-control mt-2"
-							id="description"
-							placeholder="Texte de votre page légal..."
-							onChange={e => setLegalPage(e.target.value)}
-						/>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button
-								className="btn btn-primary"
-								id="legal"
-								onClick={handleLog}
-							>
-								Enregistrer
-							</button>
-						</div>
-					</div>
-				)}
-
-				{/* show status global to sell  field*/}
-				{thirdStatusPage && (
-					<div className="row input-group-newsletter">
-						<h1 class="fst-italic lh-1 mb-4">
-							Entre les informations de vos pages légals
-						</h1>
-						<h5>Etape 2/4 : Conditions générales de ventes </h5>
-						<textarea
-							className="form-control mt-2"
-							id="description"
-							placeholder="Texte de votre page conditions générale de ventes..."
-							onChange={e => setStatusPage(e.target.value)}
-						/>
-						<div class="row mt-2">
-							<div className="error">{errorInfo}</div>
-							<button
-								className="btn btn-primary"
-								id="status"
-								onClick={handleLog}
-							>
-								Enregistrer
-							</button>
-						</div>
-					</div>
-				)}
-
-				{/* show status Using data visitor*/}
-				{thirdUserPage && (
-					<div className="row input-group-newsletter  mt-2">
-						<h1 class="fst-italic lh-1 mb-4">
-							Entre les informations de vos pages légals
-						</h1>
-						<h5>Etape 3/4 : Conditions générales d'utilisations </h5>
-						<textarea
-							className="form-control mt-2"
-							id="user"
-							placeholder="Texte de votre page condition d'utilisation des données de vos clients..."
-							onChange={e => setUserPage(e.target.value)}
-						/>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button className="btn btn-primary" id="user" onClick={handleLog}>
-								Validé
-							</button>
-						</div>
-					</div>
-				)}
-
-				{/* show faq*/}
-				{thirdFaqPage && (
-					<div className="row input-group-newsletter  mt-2">
-						<h1 class="fst-italic lh-1 mb-4">
-							Entre les informations de vos pages légals
-						</h1>
-						<h5>Etape 3/4 : FAQ </h5>
-						<textarea
-							className="form-control mt-2"
-							id="faq"
-							placeholder="Texte de votre page faq..."
-							onChange={e => setFaqPage(e.target.value)}
-						/>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button className="btn btn-primary" id="faq" onClick={handleLog}>
-								Validé
-							</button>
-						</div>
-					</div>
-				)}
-
-				{/* show picture uplaod */}
-				{showPicture && (
-					<>
-						<div className="pic-container">
-							<h4 class="fst-italic lh-1 mb-4">Un logo pour votre boutique</h4>
-							<div className="icon">
-								<div className="upload-picture">
-									<img src="./img/icons/picture.svg" alt="img" />
+						{primary && (
+							<>
+								<h1 class="fst-italic lh-1 mb-4">
+									Construisez votre boutique e-commerce
+								</h1>
+								<p class="mb-5">
+									Propulser votre entreprise en le rendant plus visible.Des
+									millions de marques parmi les plus prospères au monde font
+									confiance à web site pour vendre, expédier et traiter
+									rapidemment leurs commandes.
+								</p>
+								<div class="row">
 									<input
-										type="file"
-										id="logo"
-										name="file"
-										accept=".jpg, .png, .jpeg"
-										onChange={e => handledPicture(e)}
+										class="form-control"
+										id="email"
+										type="email"
+										defaultValue={email}
+										placeholder="Entre votre addresse email..."
+										onChange={e => setEmail(e.target.value)}
+									/>
+
+									<div className="error">{errorInfo}</div>
+								</div>
+							</>
+						)}
+						{primaryConfirm && (
+							<>
+								<h1 class="fst-italic lh-1 mb-4">Creer votre mot de passe</h1>
+								<div class="row">
+									<input
+										class="form-control mt-2"
+										id="password"
+										type="password"
+										defaultValue={password}
+										placeholder="Mot de passe"
+										onChange={e => setPassword(e.target.value)}
+									/>
+									<input
+										class="form-control mt-2"
+										id="passwordConfirm"
+										type="password"
+										defaultValue={passwordConfirme}
+										placeholder="Confirmer mot de passe"
+										onChange={e => setPasswordConfirme(e.target.value)}
 									/>
 								</div>
-							</div>
-							<div className="pic-view">
-								<img src={postPicture} alt="" />
-								<div className="message-preview">preview</div>
-							</div>
-						</div>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button class="btn btn-primary" id="logo" onClick={handleLog}>
-								Enregister
-							</button>
-						</div>
-					</>
-				)}
+								<div className="error">{errorInfo}</div>
+							</>
+						)}
 
-				{/* validation view */}
-				{showValid && (
-					<div class="row input-group-newsletter">
-						<h1 class="fst-italic lh-1 mb-4">Verification</h1>
-						<p class="mb-5">
-							Etes-vous sûr de la validité de vos informations. si oui nous
-							passerons a la creation de votre boutique et nous mettons a votre
-							disposition un template de base.
-						</p>
-						<div class="row"></div>
-						<div className="error">{errorInfo}</div>
-						<div class="row mt-2">
-							<button class="btn btn-primary" id="create" onClick={handleLog}>
-								Créer
-							</button>
-						</div>
+						{/*second*/}
+						{second && (
+							<>
+								<h1 class="fst-italic lh-1 mb-4">
+									Entre les informations de votre boutique
+								</h1>
+								<div class="row">
+									<input
+										class="form-control"
+										id="name"
+										type="text"
+										defaultValue={name}
+										placeholder="Entre votre nom..."
+										onChange={e => setName(e.target.value)}
+									/>
+									<input
+										class="form-control mt-2"
+										id="firstName"
+										type="text"
+										defaultValue={firstName}
+										placeholder="Entre votre prenom..."
+										onChange={e => setFirstName(e.target.value)}
+									/>
+									<input
+										class="form-control mt-2"
+										id="store"
+										type="text"
+										defaultValue={store}
+										placeholder="Entre le nom de votre boutique..."
+										onChange={e => setStore(e.target.value)}
+									/>
+									<input
+										class="form-control mt-2"
+										id="phone"
+										type="tel"
+										defaultValue={phone}
+										placeholder="Entre votre numéro de téléphone..."
+										onChange={e => setPhone(e.target.value)}
+									/>
+									<textarea
+										className="form-control mt-2"
+										id="decription"
+										defaultValue={description}
+										placeholder="Décrivez votre boutique..."
+										onChange={e => setDescription(e.target.value)}
+									/>
+								</div>
+								<div className="error">{errorInfo}</div>
+							</>
+						)}
+
+						{/* display legal page */}
+						{thirdLegalPage && (
+							<>
+								<h1 class="fst-italic lh-1 mb-4">
+									Entre les informations de vos pages légals
+								</h1>
+								<h5>Etape 1/4 : Page légal</h5>
+								<textarea
+									className="form-control mt-2"
+									id="description"
+									defaultValue={legalPage}
+									placeholder="Texte de votre page légal..."
+									onChange={e => setLegalPage(e.target.value)}
+								/>
+								<div className="error">{errorInfo}</div>
+							</>
+						)}
+
+						{/* show status global to sell  field*/}
+						{thirdStatusPage && (
+							<>
+								<h1 class="fst-italic lh-1 mb-4">
+									Entre les informations de vos pages légals
+								</h1>
+								<h5>Etape 2/4 : Conditions générales de ventes </h5>
+								<textarea
+									className="form-control mt-2"
+									id="description"
+									defaultValue={statusPage}
+									placeholder="Texte de votre page conditions générale de ventes..."
+									onChange={e => setStatusPage(e.target.value)}
+								/>
+								<div className="error">{errorInfo}</div>
+							</>
+						)}
+
+						{/* show status Using data visitor*/}
+						{thirdUserPage && (
+							<>
+								<h1 class="fst-italic lh-1 mb-4">
+									Entre les informations de vos pages légals
+								</h1>
+								<h5>Etape 3/4 : Conditions générales d'utilisations </h5>
+								<textarea
+									className="form-control mt-2"
+									id="user"
+									defaultValue={userPage}
+									placeholder="Texte de votre page condition d'utilisation des données de vos clients..."
+									onChange={e => setUserPage(e.target.value)}
+								/>
+								<div className="error">{errorInfo}</div>
+							</>
+						)}
+
+						{/* show faq*/}
+						{thirdFaqPage && (
+							<div className="row input-group-newsletter  mt-2">
+								<h1 class="fst-italic lh-1 mb-4">
+									Entre les informations de vos pages légals
+								</h1>
+								<h5>Etape 3/4 : FAQ </h5>
+								<textarea
+									className="form-control mt-2"
+									id="faq"
+									defaultValue={faqPage}
+									placeholder="Texte de votre page faq..."
+									onChange={e => setFaqPage(e.target.value)}
+								/>
+								<div className="error">{errorInfo}</div>
+							</div>
+						)}
+
+						{/* show picture uplaod */}
+						{showPicture && (
+							<>
+								<div className="pic-container">
+									<h4 class="fst-italic lh-1 mb-4">
+										Un logo pour votre boutique
+									</h4>
+									<div className="icon">
+										<div className="upload-picture">
+											<img src="./img/icons/picture.svg" alt="img" />
+											<input
+												type="file"
+												id="logo"
+												name="file"
+												defaultValue={File}
+												accept=".jpg, .png, .jpeg"
+												onChange={e => handledPicture(e)}
+											/>
+										</div>
+									</div>
+									<div className="pic-view">
+										<img src={postPicture} alt="" />
+										<div className="message-preview">preview</div>
+									</div>
+								</div>
+								<div className="error">{errorInfo}</div>
+							</>
+						)}
+
+						{/* validation view */}
+						{showValid && (
+							<>
+								<h1 class="fst-italic lh-1 mb-4">Verification</h1>
+								<p class="mb-5">
+									Etes-vous sûr de la validité de vos informations. si oui nous
+									passerons a la creation de votre boutique et nous mettons a
+									votre disposition un template de base.
+								</p>
+								<div class="row"></div>
+								<div className="error">{errorInfo}</div>
+							</>
+						)}
+						<BtnView type={btnType} handleLog={handleLog} />
 					</div>
-				)}
-			</form>
+				</form>
+			)}
 		</>
 	);
 };
