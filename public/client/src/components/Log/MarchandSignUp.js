@@ -215,18 +215,12 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 					name: name,
 					firstName: firstName,
 					storeName: store,
-					email: email,
 					phone: Number(phone),
-					compte: '0',
 					description: description,
-					baniere: 'client/public/img/banniere.jpg',
 					legalPage: legalPage,
-					logo: '/logo',
-					favicon: '/favicon',
 					sellPage: statusPage,
 					useTerms: userPage,
 					faq: faqPage,
-					password: password,
 				};
 				console.log(data);
 				setFormSubmit(true);

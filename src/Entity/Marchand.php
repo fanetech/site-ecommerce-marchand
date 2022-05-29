@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\MarchandRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MarchandRepository::class)]
@@ -22,10 +23,10 @@ class Marchand
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $phone;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime')]
     private $createdAt;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime')]
     private $updatedAt;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -54,6 +55,13 @@ class Marchand
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $copyright;
+
+    public function __construct()
+    {
+        //irriger createdAt and UpdatedAt
+        $this->setUpdatedAt(new DateTime);
+        $this->setCreatedAt(new DateTime);
+    }
 
     public function getId(): ?int
     {
