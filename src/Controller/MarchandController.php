@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Marchand;
+use App\Form\MarchandType;
 use App\Repository\MarchandRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +19,7 @@ class MarchandController extends AbstractController
     {
         $data = $request->getContent();
         $dataJson = json_decode($data);
-        if (property_exists($dataJson, 'name') && property_exists($dataJson, 'firstName') && property_exists($dataJson, 'storeName') && property_exists($dataJson, 'phone') && property_exists($dataJson, 'description') && property_exists($dataJson, 'legalPage') && property_exists($dataJson, 'sellPage') && property_exists($dataJson, 'userTerm') && property_exists($dataJson, 'faq')) {
+        if (property_exists($dataJson, 'name') && property_exists($dataJson, 'firstName') && property_exists($dataJson, 'storeName') && property_exists($dataJson, 'phone') && property_exists($dataJson, 'description') && property_exists($dataJson, 'legalPage') && property_exists($dataJson, 'sellPage') && property_exists($dataJson, 'useTerme') && property_exists($dataJson, 'faq')) {
             //irigation object
             $marchand = new Marchand();
             $marchand->setName($dataJson->name);
@@ -28,7 +29,7 @@ class MarchandController extends AbstractController
             $marchand->setStoreDescription($dataJson->description);
             $marchand->setLegalPage($dataJson->legalPage);
             $marchand->setSellPage($dataJson->sellPage);
-            $marchand->setUseTerme($dataJson->userTerm);
+            $marchand->setUseTerme($dataJson->useTerme);
             $marchand->setFaq($dataJson->faq);
 
             //send to DB
@@ -80,19 +81,59 @@ class MarchandController extends AbstractController
             'content' => "Marchand non trouvé"
         ]);
     }
-    //#[Route('/{id}/edit', name: 'api.marchand.edit', methods: 'PUT')]
-    //public function edit(Marchand $marchand, MarchandRepository $repo, ManagerRegistry $doctrine): JsonResponse
-    //{
-    //    if ($marchand) {
-    //        //$repo->add($marchand, true);
-    //        $manager = $doctrine->getManager();
-    //        $manager->persist($marchand);
-    //        $manager->flush();
-    //        dd($marchand);
-    //    }
-    //    return $this->json([
-    //        'msg' => 'error',
-    //        'content' => "Pas de marchands"
-    //    ]);
-    //}
+    #[Route('/edit/{id}', name: 'api.marchand.edit', methods: 'PUT')]
+    public function edit(Marchand $marchand = null, ManagerRegistry $doctrine, Request $request): JsonResponse
+    {
+        if ($marchand) {
+            //get request
+            $data = $request->getContent();
+
+            //decode request
+            $dataJson = json_decode($data, true);
+
+            if ($dataJson) {
+                //file form with field send
+                $form = $this->createForm(MarchandType::class, $marchand);
+                $form->submit($dataJson);
+
+                //send to DB
+                $manager = $doctrine->getManager();
+                $manager->flush();
+
+                //send to response
+                //return new JsonResponse($dataJson);
+                return $this->json([
+                    'msg' => 'success',
+                    'content' => $dataJson
+                ]);
+            }
+            //if error response
+            return $this->json([
+                'msg' => 'error',
+                'content' => "information invalide"
+            ]);
+        }
+
+        //if error response
+        return $this->json([
+            'msg' => 'error',
+            'content' => "Utilisateur non trouvé"
+        ]);
+    }
+    #[Route('/delete/{id}', name: 'api.marchand.delete', methods: 'DELETE')]
+    public function delete(Marchand $marchand, MarchandRepository $repo): JsonResponse
+    {
+        if ($marchand) {
+
+            $repo->remove($marchand, true);
+            return $this->json([
+                'msg' => 'success',
+                'content' => "utilisateur supprimé avec succès"
+            ]);
+        }
+        return $this->json([
+            "msg" => 'error',
+            "content" => 'Utilisateur non trouvé'
+        ]);
+    }
 }
