@@ -24,10 +24,19 @@ class AuthenticatorController extends AbstractController
         $dataJson = json_decode($data);
 
         //vérification si tout les champs on été envoyé puis envoi dans la DB
-        if (property_exists($dataJson, 'email') && property_exists($dataJson, 'password') && property_exists($dataJson, 'role')) {
+        if (property_exists($dataJson, 'email') && property_exists($dataJson, 'password') && property_exists($dataJson, 'role') && property_exists($dataJson, 'userId')) {
+            //$repository = $doctrine->getRepository(User::class);
+            //$userExist = $repository->findBy(['email' => $dataJson->email]);
+            //if ($userExist) {
+            //    return $this->json([
+            //        'msg' => 'error',
+            //        'content' => 'Email déja utiliser',
+            //    ], Response::HTTP_ACCEPTED);
+            //}
             $user = new User();
             $user->setEmail($dataJson->email);
             $user->setRoles([$dataJson->role]);
+            $user->setIdUser($dataJson->userId);
 
             //encodage du mot de passe
             $passwordClair = $dataJson->password;
@@ -44,35 +53,43 @@ class AuthenticatorController extends AbstractController
                 'msg' => 'sucess',
                 'id' => $user->getId(),
                 'email' => $user->getEmail(),
-                'roles' => $user->getRoles()
+                'roles' => $user->getRoles(),
+                'userId' => $user->getIdUser()
             ], Response::HTTP_CREATED, [
                 'Allow-Origin' => '*',
             ]);
         }
         return $this->json([
             'msg' => 'error',
-            'content' => 'Donnés nos valide',
-        ], Response::HTTP_UNAUTHORIZED);
+            'content' => 'Donnés nos valide. veuillez re-essayé',
+        ], Response::HTTP_ACCEPTED);
     }
     #[Route('/login', name: 'api.authenticator.login', methods: "POST")]
     public function login(?User $user, JWTTokenManagerInterface $JWTManager): JsonResponse
     {
-        $user = $this->getUser();
-        $token = $JWTManager->create($user);
-        if ($user) {
-            //$userToken = $this->get('security.tok');
+        try {
+
+            $user = $this->getUser();
+            $token = $JWTManager->create($user);
+            if ($user) {
+                //$userToken = $this->get('security.tok');
+                return $this->json([
+                    "msg" => "success",
+                    "id" => $user->getId(),
+                    "email" => $user->getUserIdentifier(),
+                    "roles" => $user->getRoles(),
+                    "userId" => $user->getIdUser(),
+                    "token" => $token,
+                ], Response::HTTP_ACCEPTED);
+            }
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
             return $this->json([
-                "msg" => "success",
-                "id" => $user->getId(),
-                "email" => $user->getUserIdentifier(),
-                "roles" => $user->getRoles(),
-                "token" => $token
+                "msg" => "error",
+                "content" => "Utilisateur non trouvé"
             ], Response::HTTP_ACCEPTED);
         }
-        return $this->json([
-            "msg" => "error",
-            "content" => "Utilisateur non trouvé"
-        ], Response::HTTP_UNAUTHORIZED);
     }
 
     #[Route('/checkAuth', name: 'api.authenticator.checkAuth', methods: "GET")]

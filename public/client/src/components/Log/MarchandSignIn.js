@@ -22,9 +22,14 @@ const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 					//send to server of verify
 					API_BASIC.post('/authenticator/login', data)
 						.then(res => {
-							document.cookie =
-								'marchandJWT=' + res.data.token + '; path=/;expires=' + data;
-							console.log(res);
+							if (res.data.msg === 'error') {
+								console.log(res.data.content);
+							} else {
+								console.log(res.data);
+								document.cookie =
+									'marchandJWT=' + res.data.token + '; path=/;expires=' + data;
+								window.location = '/marchand';
+							}
 							setIsLoading(false);
 						})
 						.catch(err => {

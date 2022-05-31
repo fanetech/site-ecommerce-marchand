@@ -149,9 +149,13 @@ const BtnView = ({ handleLog, type, isLoading }) => {
 						</h4>
 					</div>
 					<div className="col-2"></div>
-					<button class="btn btn-primary col" id="create" onClick={handleBtn}>
-						Créer
-					</button>
+					{isLoading ? (
+						<Loader />
+					) : (
+						<button class="btn btn-primary col" id="create" onClick={handleBtn}>
+							Créer
+						</button>
+					)}
 				</div>
 			)}
 		</>

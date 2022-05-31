@@ -8,6 +8,7 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [btnType, setBtnType] = useState('essaie');
 	const [formSubmit, setFormSubmit] = useState(false);
+	const [isRegistered, setIsRegistered] = useState(false);
 
 	const [errorInfo, setErrorInfo] = useState('');
 	const [primary, setPrimary] = useState(true);
@@ -76,25 +77,6 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 				setErrorInfo('');
 				if (password && passwordConfirme) {
 					if (password === passwordConfirme) {
-						const data = {
-							email: email,
-							role: 'ROLE_MARCHAND',
-							password: password,
-						};
-
-						//API_BASIC.post('/authenticator/register', data, {
-						//	headers: {
-						//		'Content-Type': 'application/json',
-						//	},
-						//})
-						//	.then(res => {
-						//		console.log(res);
-						//		setPrimaryConfirm(false);
-						//		setSecond(true);
-						//	})
-						//	.catch(err => {
-						//		console.error('signUp error =', err);
-						//	});
 						setPrimaryConfirm(false);
 						setSecond(true);
 						setBtnType('storeInfo');
@@ -182,8 +164,8 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 				setErrorInfo('');
 				if (faqPage) {
 					setThirdFaqPage(false);
-					setShowPicture(true);
-					setBtnType('fileInfo');
+					setShowValid(true);
+					setBtnType('create');
 				} else {
 					setErrorInfo(
 						'veuillez remplir bien remplir vos conditions générales de ventes ',
@@ -208,23 +190,58 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 			case 'preCreate':
 				setPrimary(true);
 				setShowValid(false);
+				cancel();
 				setBtnType('essaie');
 				break;
 			case 'create':
+				setIsLoading(true);
 				const data = {
+					email: email,
 					name: name,
 					firstName: firstName,
 					storeName: store,
-					phone: Number(phone),
+					phone: phone,
 					description: description,
 					legalPage: legalPage,
 					sellPage: statusPage,
-					useTerms: userPage,
+					useTerme: userPage,
 					faq: faqPage,
 				};
-				console.log(data);
-				setFormSubmit(true);
-				//add to DB
+
+				//add data marchand to db
+				API_BASIC.post('/marchand/add', data)
+					.then(res => {
+						if (res.data.msg === 'error') {
+							setErrorInfo(res.data.content);
+						} else {
+							const dataUser = {
+								email: email,
+								role: 'ROLE_MARCHAND',
+								password: password,
+								userId: res.data.marchand.id,
+							};
+
+							//add data for user authenticator
+							API_BASIC.post('/authenticator/register', dataUser)
+								.then(res => {
+									if (res.data.msg === 'error') {
+										console.log(res.data.content);
+									} else {
+										console.log(res.data);
+										setFormSubmit(true);
+										setIsLoading(false);
+									}
+								})
+								.catch(err => {
+									setIsLoading(false);
+									console.error('signUp error =', err);
+								});
+						}
+					})
+					.catch(err => {
+						console.log(err);
+						setIsLoading(false);
+					});
 				break;
 			default:
 				break;
@@ -235,6 +252,20 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 		setErrorInfo('');
 		setPostPicture(URL.createObjectURL(e.target.files[0]));
 		setFile(e.target.files[0]);
+	};
+	const cancel = () => {
+		setEmail('');
+		setPassword('');
+		setPasswordConfirme('');
+		setStore('');
+		setName('');
+		setFirstName('');
+		setDescription('');
+		setPhone('');
+		setFaqPage('');
+		setUserPage('');
+		setLegalPage('');
+		setStatusPage('');
 	};
 
 	return (
@@ -464,7 +495,11 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 								<div className="error">{errorInfo}</div>
 							</>
 						)}
-						<BtnView type={btnType} handleLog={handleLog} />
+						<BtnView
+							type={btnType}
+							handleLog={handleLog}
+							isLoading={isLoading}
+						/>
 					</div>
 				</form>
 			)}
