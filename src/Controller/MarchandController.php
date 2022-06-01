@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Marchand;
+use App\Entity\Product;
 use App\Entity\User;
 use App\Form\MarchandType;
 use App\Repository\MarchandRepository;
@@ -18,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class MarchandController extends AbstractController
 {
     #[Route('/add', name: 'marchand.add', methods: 'POST')]
-    public function add(Request $request, MarchandRepository $repo, ManagerRegistry $doctrine): JsonResponse
+    public function add(Request $request,  ManagerRegistry $doctrine): JsonResponse
     {
         $data = $request->getContent();
         $dataJson = json_decode($data);
@@ -73,8 +74,8 @@ class MarchandController extends AbstractController
             'content' => 'information invalide. veuillez recommancé',
         ]);
     }
-    #[Route('/show/all', name: 'api.marchand.show.all', methods: 'GET')]
-    public function showAll(ManagerRegistry $doctrine): JsonResponse
+    #[Route('/show/alls', name: 'api.marchand.show.alls', methods: 'GET')]
+    public function showAlls(ManagerRegistry $doctrine): JsonResponse
     {
         $registry = $doctrine->getRepository(Marchand::class);
         $marchand = $registry->findAll();
@@ -90,13 +91,18 @@ class MarchandController extends AbstractController
             'content' => "Pas de marchands"
         ]);
     }
-    #[Route('/{id}/detail', name: 'api.marchand.detail', methods: 'GET')]
-    public function detail(Marchand $marchand = null): JsonResponse
+    #[Route('/show/detail/{id}', name: 'api.marchand.show.detail', methods: 'GET')]
+    public function showDetail(Marchand $marchand = null, ManagerRegistry $doctrine): JsonResponse
     {
         if ($marchand) {
+            //dd($marchand);
+            //search product
+            $repository = $doctrine->getRepository(Product::class);
+            $products = $repository->findBy(["marchandId" => $marchand->getId()]);
             return $this->json([
                 'msg' => 'success',
-                'marchand' => $marchand
+                'marchand' => $marchand,
+                "products" => $products
             ]);
         }
         return $this->json([
@@ -144,7 +150,7 @@ class MarchandController extends AbstractController
         ]);
     }
     #[Route('/delete/{id}', name: 'api.marchand.delete', methods: 'DELETE')]
-    public function delete(Marchand $marchand, MarchandRepository $repo): JsonResponse
+    public function delete(Marchand $marchand = null, MarchandRepository $repo): JsonResponse
     {
         if ($marchand) {
 
@@ -165,23 +171,22 @@ class MarchandController extends AbstractController
 
         //get file and directory
         $file = $request->files->get('file');
-        $path = $request->request->get('directory');
-        $id = $request->request->get('id');
-        $typePic = $request->request->get('typePic');
+        $marchandId = $request->request->get('marchandId');
+        $type = $request->request->get('type');
         $repository = $doctrine->getRepository(Marchand::class);
-        $marchand = $repository->find($id);
-        if ($file && ($path === 'store' || $path === 'user') && $marchand && ($typePic === "logo" || $typePic === "ban")) {
+        $marchand = $repository->find($marchandId);
+        if ($file && $marchand && ($type === "logo" || $type === "ban")) {
 
             //ajouter la verification du mimetype
             //....
             //select file directory
-            if ($path === 'store') $dossier = $this->getParameter("storesPic_directory");
+            $dossier = $this->getParameter("images_directory");
             //call service for upload file       
-            $fileName = $uploader->uploader($file, $dossier, $id);
+            $fileName = $uploader->uploader($file, $dossier, $marchandId);
 
             //send file name to, DB
-            if ($typePic === 'logo') $marchand->setLogo($fileName);
-            if ($typePic === 'ban') $marchand->setBanniere($fileName);
+            if ($type === 'logo') $marchand->setLogo($fileName);
+            if ($type === 'ban') $marchand->setBanniere($fileName);
             $repo->add($marchand, true);
 
             //dd($file);

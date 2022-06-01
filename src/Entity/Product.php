@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
@@ -13,16 +14,16 @@ class Product
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $category;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $title;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $description;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $initialPrice;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -45,6 +46,16 @@ class Product
 
     #[ORM\Column(type: 'datetime')]
     private $updatedAt;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $marchandId;
+
+    public function __construct()
+    {
+        //irriger createdAt and UpdatedAt
+        $this->setUpdatedAt(new DateTime());
+        $this->setCreatedAt(new DateTime);
+    }
 
     public function getId(): ?int
     {
@@ -179,6 +190,18 @@ class Product
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getMarchandId(): ?string
+    {
+        return $this->marchandId;
+    }
+
+    public function setMarchandId(string $marchandId): self
+    {
+        $this->marchandId = $marchandId;
 
         return $this;
     }

@@ -56,6 +56,7 @@ class Marchand
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $copyright;
 
+
     public function __construct()
     {
         //irriger createdAt and UpdatedAt
