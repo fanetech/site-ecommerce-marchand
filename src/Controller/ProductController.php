@@ -27,11 +27,12 @@ class ProductController extends AbstractController
         $title = $request->request->get('title');
         $description = $request->request->get('description');
         $initialPrice = $request->request->get('initialPrice');
+        $sellPrice = $request->request->get('sellPrice');
         $stock = $request->request->get('stock');
         $marchandId = $request->request->get('marchandId');
         //dd($file);
 
-        if ($file && $category && $title && $description && $initialPrice && $stock && $marchandId) {
+        if ($file && $category && $title && $description && $initialPrice && $stock && $sellPrice && $marchandId) {
             //select file directory
             $dossier = $this->getParameter("images_directory");
             //call service for upload file       
@@ -42,6 +43,7 @@ class ProductController extends AbstractController
             $product->setDescription($description);
             $product->setTitle($title);
             $product->setInitialPrice($initialPrice);
+            $product->setSellPrice($sellPrice);
             $product->setStock($stock);
             $product->setSupplyTime(new DateTime());
             $product->setPicture($fileName);
@@ -139,19 +141,19 @@ class ProductController extends AbstractController
         ]);
     }
     #[Route('/delete/{id}', name: 'api.product.delete', methods: "DELETE")]
-    public function delete(Product $product = null, ProductRepository $repo): JsonResponse
+    public function delete(Product $product, ProductRepository $repo): JsonResponse
     {
         if (!$product) {
             return $this->json([
                 'msg' => 'error',
                 'content' => 'Produit non trouvé',
             ]);
-            $repo->remove($product, true);
-            return $this->json([
-                'msg' => 'success',
-                'content' => 'Produit supprimé avec succès',
-            ]);
         }
+        $repo->remove($product, true);
+        return $this->json([
+            'msg' => 'success',
+            'content' => 'Produit supprimé avec succès',
+        ]);
     }
     #[Route('/upload', name: 'api.product.upload', methods: 'POST')]
     public function upload(Request $request, UploaderFileService $uploader, ManagerRegistry $doctrine, ProductRepository $repo)

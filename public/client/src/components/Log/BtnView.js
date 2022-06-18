@@ -42,7 +42,7 @@ const BtnView = ({ handleLog, type, isLoading }) => {
 					</div>
 					<div className="col-2"></div>
 					<button class="btn btn-primary col" id="essaie" onClick={handleBtn}>
-						Essaie
+						Inscription
 					</button>
 				</div>
 			)}

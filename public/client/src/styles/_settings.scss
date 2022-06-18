@@ -22,11 +22,14 @@ $bg-btn-hv: #254343;
 	display: flex;
 	justify-items: center;
 	justify-content: center;
-	font-size: 1.1rem;
+	font-size: 1.2rem;
 }
-.success{
+.success {
+	display: flex;
+	justify-items: center;
+	justify-content: center;
 	color: green;
-	font-size: 1.1rem;
+	font-size: 1.2rem;
 }
 .test {
 	z-index: 10000;
@@ -82,4 +85,24 @@ $bg-btn-hv: #254343;
 	color: white;
 	border-radius: 3px;
 	margin-left: 10px;
+}
+
+.btn-delete {
+	background: #dc3545 !important;
+	border: #dc3545 !important;
+	&:hover {
+		background: #a82f3b !important;
+		border: #a82f3b !important;
+	}
+}
+
+.signup-container {
+	label {
+		margin-bottom: 0;
+		font-size: 15px;
+		font-weight:bolder;
+	}
+	input{
+		margin-top: 0 !important;
+	}
 }

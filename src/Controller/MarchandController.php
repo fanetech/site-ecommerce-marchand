@@ -14,12 +14,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/marchand')]
 class MarchandController extends AbstractController
 {
     #[Route('/add', name: 'marchand.add', methods: 'POST')]
-    public function add(Request $request,  ManagerRegistry $doctrine): JsonResponse
+    public function add(Request $request,  ManagerRegistry $doctrine, ValidatorInterface $validator): JsonResponse
     {
         $data = $request->getContent();
         $dataJson = json_decode($data);
@@ -33,6 +35,14 @@ class MarchandController extends AbstractController
                     'msg' => 'error',
                     'content' => 'Nom de boutique déja utiliser. veuillez le changé',
                 ], Response::HTTP_ACCEPTED);
+            }
+            $emailError =  $validator->validate($dataJson->email, new Email());
+            if ($emailError->count() > 0) {
+                return $this->json([
+                    "msg" => "error",
+                    "content" => "Erreur sur l'email",
+                    "error" => $emailError[0]
+                ]);
             }
 
             //verify if email exist in user table
@@ -163,6 +173,32 @@ class MarchandController extends AbstractController
         return $this->json([
             "msg" => 'error',
             "content" => 'Utilisateur non trouvé'
+        ]);
+    }
+    #[Route('/store', name: 'api.marchand.store', methods: 'POST')]
+    public function store(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $data = $request->getContent();
+        $dataJson = json_decode($data);
+        if (property_exists($dataJson, 'store')) {
+            $repository = $doctrine->getRepository(Marchand::class);
+            $marchand = $repository->findBy(["storeName" => $dataJson->store]);
+            if (!$marchand) {
+                return $this->json([
+                    'msg' => 'error',
+                    'content' => "La boutique n'existe pas"
+                ]);
+            }
+
+
+            return $this->json([
+                'msg' => 'success',
+                'marchand' => $marchand,
+            ]);
+        }
+        return $this->json([
+            'msg' => 'error',
+            'content' => "Information incorrect"
         ]);
     }
     #[Route('/upload', name: 'api.marchand.upload', methods: 'POST')]

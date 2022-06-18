@@ -8,7 +8,13 @@ class UploaderFileService
 {
 	public function uploader(UploadedFile $file, string $dossier, string $id = null)
 	{
-		$fileName = $id . "." . time() . ".jpg";
+		if (!$id) {
+
+			$fileName = time() . ".jpg";
+		} else {
+
+			$fileName = $id . "." . time() . ".jpg";
+		}
 		$file->move($dossier, $fileName);
 		return $fileName;
 	}

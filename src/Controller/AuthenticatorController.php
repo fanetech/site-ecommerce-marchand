@@ -11,12 +11,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('api/authenticator')]
 class AuthenticatorController extends AbstractController
 {
     #[Route('/register', name: 'api.authenticator.register', methods: "POST")]
-    public function register(Request $request, UserPasswordHasherInterface $hasher, ManagerRegistry $doctrine): JsonResponse
+    public function register(Request $request, UserPasswordHasherInterface $hasher, ManagerRegistry $doctrine, ValidatorInterface $validator): JsonResponse
     {
         //Recupération de la request
         $data =  $request->getContent();
@@ -25,6 +27,15 @@ class AuthenticatorController extends AbstractController
 
         //vérification si tout les champs on été envoyé puis envoi dans la DB
         if (property_exists($dataJson, 'email') && property_exists($dataJson, 'password') && property_exists($dataJson, 'role') && property_exists($dataJson, 'userId')) {
+
+            $emailError =  $validator->validate($dataJson->email, new Email());
+            if ($emailError->count() > 0) {
+                return $this->json([
+                    "msg" => "error",
+                    "content" => "Erreur sur l'email",
+                    "error" => $emailError[0]
+                ]);
+            }
             //$repository = $doctrine->getRepository(User::class);
             //$userExist = $repository->findBy(['email' => $dataJson->email]);
             //if ($userExist) {
@@ -116,7 +127,8 @@ class AuthenticatorController extends AbstractController
             $res[] = array(
                 'id' => $userData->getId(),
                 'email' => $userData->getEmail(),
-                'role' => $userData->getRoles()
+                'role' => $userData->getRoles(),
+                "storeId" => $userData->getIdUser()
             );
         }
         return $this->json([

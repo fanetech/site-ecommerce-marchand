@@ -1,14 +1,19 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const Navbar = () => {
 	return (
 		<div>
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
 				<div class="container px-4 px-lg-5">
-					<a class="navbar-brand" href="#!">
-						FaneShop
-					</a>
+					{/*<Link to={'/marchand'} class="navbar-brand">
+						<img
+							src="./img/eshop.png"
+							alt="FaneShop"
+							width={150}
+							height={150}
+						/>
+					</Link>*/}
 					<button
 						class="navbar-toggler"
 						type="button"
@@ -45,13 +50,13 @@ const Navbar = () => {
 								</button>
 							</NavLink>
 						</form>
-						<form class="d-flex ml-2">
+						{/*<form class="d-flex ml-2">
 							<NavLink exact to="/test">
 								<button class="btn btn-outline-dark" type="submit">
 									test
 								</button>
 							</NavLink>
-						</form>
+						</form>*/}
 					</div>
 				</div>
 			</nav>

@@ -1,14 +1,10 @@
 import React from 'react';
+import ModelIndex from '../ModelIndex';
 
 const MarchandSideBar = () => {
 	return (
-		<div className="sidebar-container">
-			<div className="icons-sidebar">
-				<button>Accieul</button>
-				<button>Produit</button>
-				<button>Contact</button>
-				<button>Avis</button>
-			</div>
+		<div>
+			<ModelIndex />
 		</div>
 	);
 };

@@ -213,6 +213,7 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 					.then(res => {
 						if (res.data.msg === 'error') {
 							setErrorInfo(res.data.content);
+							setIsLoading(false);
 						} else {
 							const dataUser = {
 								email: email,
@@ -225,7 +226,7 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 							API_BASIC.post('/authenticator/register', dataUser)
 								.then(res => {
 									if (res.data.msg === 'error') {
-										console.log(res.data.content);
+										setErrorInfo(res.data.content);
 									} else {
 										console.log(res.data);
 										setFormSubmit(true);
@@ -279,7 +280,7 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 				</>
 			) : (
 				<form id="contactForm" data-sb-form-api-token="API_TOKEN">
-					<div class="row input-group-newsletter">
+					<div class="row input-group-newsletter signup-container">
 						{primary && (
 							<>
 								<h1 class="fst-italic lh-1 mb-4">
@@ -292,6 +293,7 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 									rapidemment leurs commandes.
 								</p>
 								<div class="row">
+									<label htmlFor="email">Email</label>
 									<input
 										class="form-control"
 										id="email"
@@ -309,20 +311,24 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 							<>
 								<h1 class="fst-italic lh-1 mb-4">Creer votre mot de passe</h1>
 								<div class="row">
+									<label htmlFor="password">Mot de passe</label>
 									<input
 										class="form-control mt-2"
 										id="password"
 										type="password"
 										defaultValue={password}
-										placeholder="Mot de passe"
+										placeholder="Mot de passe de plus de 8 caractère"
 										onChange={e => setPassword(e.target.value)}
 									/>
+									<label htmlFor="passwordConfirm">
+										Confirmer mot de passe
+									</label>
 									<input
 										class="form-control mt-2"
 										id="passwordConfirm"
 										type="password"
 										defaultValue={passwordConfirme}
-										placeholder="Confirmer mot de passe"
+										placeholder="Confirmez votre mot de passe"
 										onChange={e => setPasswordConfirme(e.target.value)}
 									/>
 								</div>
@@ -333,42 +339,47 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 						{/*second*/}
 						{second && (
 							<>
-								<h1 class="fst-italic lh-1 mb-4">
+								{/*<h1 class="fst-italic lh-1 mb-4">
 									Entre les informations de votre boutique
-								</h1>
+								</h1>*/}
 								<div class="row">
+									<label htmlFor="name">Nom</label>
 									<input
 										class="form-control"
 										id="name"
 										type="text"
 										defaultValue={name}
-										placeholder="Entre votre nom..."
+										placeholder="Entre votre nom"
 										onChange={e => setName(e.target.value)}
 									/>
+									<label htmlFor="firstName">Prenom</label>
 									<input
 										class="form-control mt-2"
 										id="firstName"
 										type="text"
 										defaultValue={firstName}
-										placeholder="Entre votre prenom..."
+										placeholder="Entre votre prenom"
 										onChange={e => setFirstName(e.target.value)}
 									/>
+									<label htmlFor="store">Nom de boutique</label>
 									<input
 										class="form-control mt-2"
 										id="store"
 										type="text"
 										defaultValue={store}
-										placeholder="Entre le nom de votre boutique..."
+										placeholder="Entre le nom de votre boutique"
 										onChange={e => setStore(e.target.value)}
 									/>
+									<label htmlFor="phone">Numéro de téléphone</label>
 									<input
 										class="form-control mt-2"
 										id="phone"
 										type="tel"
 										defaultValue={phone}
-										placeholder="Entre votre numéro de téléphone..."
+										placeholder="Veuillez entre des chiffres"
 										onChange={e => setPhone(e.target.value)}
 									/>
+									<label htmlFor="description">Description de boutique</label>
 									<textarea
 										className="form-control mt-2"
 										id="decription"
@@ -441,7 +452,7 @@ const MarchandSignUp = ({ setConnexion, setSignUp }) => {
 								<h1 class="fst-italic lh-1 mb-4">
 									Entre les informations de vos pages légals
 								</h1>
-								<h5>Etape 3/4 : FAQ </h5>
+								<h5>Etape 4/4 : FAQ </h5>
 								<textarea
 									className="form-control mt-2"
 									id="faq"

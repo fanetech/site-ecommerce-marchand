@@ -9,7 +9,7 @@ const Loader = () => {
 				color={'#2a5555'}
 				height={60}
 				width={60}
-				className="uid-loader"
+				className="uid-loader marchand-loader"
 			/>
 		</>
 	);

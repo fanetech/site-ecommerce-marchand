@@ -17,10 +17,7 @@ class ProductType extends AbstractType
             ->add('description')
             ->add('initialPrice')
             ->add('sellPrice')
-            ->add('reducedPrice')
-            ->add('stock')
-            ->add('picture')
-            ->add('supplyTime');
+            ->add('stock');
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -51,22 +51,24 @@ const MarchandSignIn = ({ setSignUp, setConnexion }) => {
 		}
 	};
 	return (
-		<div class="row input-group-newsletter">
+		<div class="row input-group-newsletter signup-container">
 			<h1 class="fst-italic lh-1 mb-4">Connexion</h1>
 			<div class="row">
+				<label htmlFor="email">Email</label>
 				<input
 					class="form-control mt-2"
 					id="email"
 					type="email"
 					defaultValue={email}
-					placeholder="Email"
+					placeholder="Veuillez entre votre email"
 					onChange={e => setEmail(e.target.value)}
 				/>
+				<label htmlFor="password">Mot de passe</label>
 				<input
 					class="form-control mt-2"
 					id="password"
 					type="password"
-					placeholder="Mot de passe"
+					placeholder="Veuillez entre votre mot de passe"
 					onChange={e => setPassword(e.target.value)}
 				/>
 			</div>
